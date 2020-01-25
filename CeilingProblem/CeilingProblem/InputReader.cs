@@ -11,10 +11,11 @@ namespace CeilingProblem
             string firstLine = Console.ReadLine();
             IList<int> firstLineTokens = ConvertStringToIntegers(firstLine);
             int numPrototypes = firstLineTokens[0];
-            return ReadPrototypes(numPrototypes);
+            int numElements = firstLineTokens[1];
+            return ReadPrototypes(numPrototypes, numElements);
         }
 
-        private IList<IList<int>> ReadPrototypes(int numPrototypes)
+        private IList<IList<int>> ReadPrototypes(int numPrototypes, int numElements)
         {
             IList<IList<int>> prototypes = new List<IList<int>>();
             for (int i = 0; i < numPrototypes; i++)

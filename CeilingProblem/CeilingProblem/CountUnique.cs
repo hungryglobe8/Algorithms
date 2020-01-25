@@ -4,14 +4,13 @@ using System.Text;
 
 namespace CeilingProblem
 {
-    public class RunProgram
+    public class CountUnique
     {
         public static int Main()
         {
             IList<BinaryTree> availableStructures = new List<BinaryTree>();
 
-            InputReader reader = new InputReader();
-            IList<IList<int>> prototypes = reader.GetUserInput();
+            IList<IList<int>> prototypes = InputReader.GetUserInput();
             foreach (IList<int> numbers in prototypes)
             {
                 BinaryTree b = new BinaryTree(numbers);
@@ -43,6 +42,12 @@ namespace CeilingProblem
         /// </summary>
         private static void PutTreeInSet(BinaryTree newTree, IList<BinaryTree> uniqueTrees)
         {
+            if (uniqueTrees.Count == 0)
+            {
+                uniqueTrees.Add(newTree);
+                return;
+            }
+
             ISet<int> newPattern = newTree.GetFilledIndeces();
             foreach (BinaryTree tree in uniqueTrees)
             {

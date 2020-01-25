@@ -33,7 +33,7 @@ namespace CeilingProblem
 
         private void Insert(int val, int currentIndex)
         {
-            if (currentIndex > SIZE)
+            while (currentIndex > SIZE)
             {
                 SIZE *= 2;
                 MoveToNewStorage();
@@ -43,6 +43,7 @@ namespace CeilingProblem
             {
                 storage[currentIndex] = val;
                 filledIndeces.Add(currentIndex);
+                return;
             }
             // Move val to the left subtree
             else if (val < storage[currentIndex])
@@ -53,7 +54,7 @@ namespace CeilingProblem
             // Move val to the right subtree
             else if (val > storage[currentIndex])
             {
-                currentIndex = (2 * currentIndex) + 2;
+                currentIndex = (1 + currentIndex) * 2;
                 Insert(val, currentIndex);
             }
         }
