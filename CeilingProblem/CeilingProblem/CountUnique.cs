@@ -10,7 +10,8 @@ namespace CeilingProblem
         {
             IList<BinaryTree> availableStructures = new List<BinaryTree>();
 
-            IList<IList<int>> prototypes = InputReader.GetUserInput();
+            InputReader reader = new InputReader();
+            IList<IList<int>> prototypes = reader.GetUserInput();
             foreach (IList<int> numbers in prototypes)
             {
                 BinaryTree b = new BinaryTree(numbers);
@@ -23,7 +24,7 @@ namespace CeilingProblem
             return 0;
         }
 
-        private static int CountDuplicateStructures(IList<BinaryTree> availableStructures)
+        public static int CountDuplicateStructures(IList<BinaryTree> availableStructures)
         {
             // Set to store unique binary tree structures.
             IList<BinaryTree> uniquePatterns = new List<BinaryTree>();

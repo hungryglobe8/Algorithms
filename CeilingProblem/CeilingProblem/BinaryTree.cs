@@ -6,8 +6,8 @@ namespace CeilingProblem
     /// <summary>
     /// BinaryTreeCreator takes in an IList of integers as its constructor.
     /// After SortTree is called, all values will be in storage in the format
-    /// of a Binary Search Tree. An array of bools is kept to determine if
-    /// two BinaryTrees have the same format.
+    /// of a Binary Search Tree. A sorted set of integers is kept to determine if
+    /// two trees have a similar structure.
     /// </summary>
     public class BinaryTree
     {
@@ -52,7 +52,7 @@ namespace CeilingProblem
                 Insert(val, currentIndex);
             }
             // Move val to the right subtree
-            else if (val > storage[currentIndex])
+            else
             {
                 currentIndex = (1 + currentIndex) * 2;
                 Insert(val, currentIndex);

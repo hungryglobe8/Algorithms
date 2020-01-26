@@ -3,10 +3,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
-namespace BinaryTreeTester
+namespace CeilingProblemTester
 {
     [TestClass]
-    public class UnitTest1
+    public class BinaryTreeTester
     {
         [TestMethod]
         public void Initialize()
@@ -65,7 +65,7 @@ namespace BinaryTreeTester
         [TestMethod]
         public void ArrayCanSupportUpTo20Layers()
         {
-            IList<int> numbers = MakeSortedList(20);
+            IList<int> numbers = MakeSortedList(30);
             BinaryTree sut = new BinaryTree(numbers);
 
             sut.SortTree();
