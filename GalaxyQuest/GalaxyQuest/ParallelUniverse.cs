@@ -11,43 +11,46 @@ namespace GalaxyQuest
 
         public ParallelUniverse(IList<Coordinate> stars, int distance)
         {
-            this.stars = (List<Coordinate>) stars;
+            this.stars = (List<Coordinate>)stars;
             this.distance = distance;
         }
 
         public string FindMajority()
         {
-            return FindMajority(stars);
-        }
+            Coordinate champion = stars[0];
+            int count = 1;
+            foreach (Coordinate star in stars)
+            {
+                // The first star is chosen as champion
+                if (star == champion)
+                    continue;
 
-        private string FindMajority(List<Coordinate> list)
-        {
-            int length = list.Count;
-            if (length == 0)
-            {
-                return null;
+                // If count is at 0, a new champion needs to be picked.
+                if (count == 0)
+                {
+                    champion = star;
+                    count++;
+                    continue;
+                }
+
+                // See if the new star is in range, if so increase count.
+                // If not, decrease count.
+                if (star.IsWithinRange(champion, distance))
+                    count++;
+                else
+                    count--;
             }
-            else if (length == 1)
-            {
-                return list[0];
-            }
+
+            if (count == 0)
+                return "NO";
             else
-            {
-                int midIndex = length / 2;
-                Coordinate x = FindMajority(list.GetRange(0, length / 2));
-                Coordinate y = FindMajority(midIndex + 1, length / 2));
-                if (x == "NO" && y == "NO")
-                    return "NO";
-                else if (x == "NO")
-                    return PossibleCandidate(y);
-            }
-            throw new NotImplementedException();
+                return PossibleCandidate(champion);
         }
 
-        private string PossibleCandidate(Coordinate y, List<Coordinate> list)
+        private string PossibleCandidate(Coordinate y)
         {
             int count = 0;
-            foreach (Coordinate star in list)
+            foreach (Coordinate star in stars)
             {
                 if (star.IsWithinRange(y, distance))
                     count++;
