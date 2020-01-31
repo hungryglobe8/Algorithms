@@ -15,7 +15,7 @@ namespace GalaxyQuest
     /// </summary>
     public class Coordinate
     {
-        private long x, y;
+        private readonly long x, y;
 
         /// <summary>
         /// Set the x and y coordinates of a point.

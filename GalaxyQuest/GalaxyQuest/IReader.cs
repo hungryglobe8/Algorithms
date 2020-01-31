@@ -8,6 +8,6 @@ namespace GalaxyQuest
     {
         void ReadInput();
         int GetDiameter();
-        IList<Coordinate> GetCoordinates();
+        IList<Coordinate> GetStars();
     }
 }
