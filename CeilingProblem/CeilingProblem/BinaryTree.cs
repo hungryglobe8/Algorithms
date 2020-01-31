@@ -33,9 +33,8 @@ namespace CeilingProblem
 
         private void Insert(int val, int currentIndex)
         {
-            while (currentIndex > SIZE)
+            if (currentIndex > SIZE)
             {
-                SIZE *= 2;
                 MoveToNewStorage();
             }
             // Base case
@@ -61,6 +60,7 @@ namespace CeilingProblem
 
         private void MoveToNewStorage()
         {
+            SIZE *= 2;
             int[] newStorage = new int[SIZE];
             storage.CopyTo(newStorage, 0);
             storage = newStorage;

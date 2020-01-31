@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GalaxyQuest", "GalaxyQuest\GalaxyQuest.csproj", "{59629794-870D-4258-B6DE-3954EBF5FCEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyQuestTests", "GalaxyQuestTests\GalaxyQuestTests.csproj", "{DDF986EF-A43A-4DB8-B69F-F5F8C78FBFF8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{59629794-870D-4258-B6DE-3954EBF5FCEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59629794-870D-4258-B6DE-3954EBF5FCEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59629794-870D-4258-B6DE-3954EBF5FCEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59629794-870D-4258-B6DE-3954EBF5FCEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDF986EF-A43A-4DB8-B69F-F5F8C78FBFF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDF986EF-A43A-4DB8-B69F-F5F8C78FBFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDF986EF-A43A-4DB8-B69F-F5F8C78FBFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDF986EF-A43A-4DB8-B69F-F5F8C78FBFF8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A198B69-0682-47CE-BD0A-D50B084089B6}
+	EndGlobalSection
+EndGlobal
