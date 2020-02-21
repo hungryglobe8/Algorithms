@@ -43,5 +43,14 @@ namespace GalaxyQuest
             // x^2 + y^2 < d^2
             return xDiff * xDiff + yDiff * yDiff <= distance * distance;
         }
+
+        public override bool Equals(object obj)
+        {
+            var coord = obj as Coordinate;
+            if (coord != null)
+                return this.x == coord.x && this.y == coord.y;
+
+            return false;
+        }
     }
 }

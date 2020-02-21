@@ -6,12 +6,12 @@ namespace GalaxyQuest
 {
     public class ParallelUniverse
     {
-        private readonly List<Coordinate> stars;
+        private readonly IList<Coordinate> stars;
         private readonly int distance;
 
         public ParallelUniverse(IList<Coordinate> stars, int distance)
         {
-            this.stars = (List<Coordinate>)stars;
+            this.stars = stars;
             this.distance = distance;
         }
 

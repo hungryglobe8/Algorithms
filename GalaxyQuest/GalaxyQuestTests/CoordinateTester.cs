@@ -16,12 +16,12 @@ namespace GalaxyQuestTests
         }
 
         [TestMethod]
-        public void ObjectsNotSame()
+        public void When_Given_Two_Coords_With_Same_X_and_Y_are_equal()
         {
             Coordinate c1 = new Coordinate(1, 5);
             Coordinate c2 = new Coordinate(1, 5);
 
-            Assert.AreNotEqual(c1, c2);
+            Assert.AreEqual(c1, c2);
         }
 
         [TestMethod]
@@ -30,8 +30,12 @@ namespace GalaxyQuestTests
             Coordinate c1 = new Coordinate(21, 5);
             Coordinate c2 = new Coordinate(1, 5);
 
-            Assert.IsTrue(c1.IsWithinRange(c2, 21));
-            Assert.IsTrue(c2.IsWithinRange(c1, 20));
+            Check_Two_Coords_Within_Range(c1, c2, 20);
+        }
+
+        private void Check_Two_Coords_Within_Range(Coordinate c1, Coordinate c2, long distance)
+        {
+            Assert.IsTrue(c1.IsWithinRange(c2, distance));
         }
 
         [TestMethod]
