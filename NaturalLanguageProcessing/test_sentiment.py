@@ -37,3 +37,67 @@ def test_read_many_words_from_file():
     data = sentiment.read_k_words_from_file(test_file, 20)
 
     assert len(data) == 16
+
+def test_look_up_feature_id():
+    test_file = test_folder + "test2.txt"
+
+    data = sentiment.read_k_words_from_file(test_file, 10)
+
+    assert sentiment.get_feature_id("apple", data) == 5
+
+def test_look_up_invalid_feature_id():
+    test_file = test_folder + "test2.txt"
+
+    data = sentiment.read_k_words_from_file(test_file, 10)
+
+    assert sentiment.get_feature_id("quirk", data) == 0
+
+def positive_sentence():
+    sentence = sentiment.Sentence(1)
+    sentence.add_word("this")
+    sentence.add_word("movie")
+    sentence.add_word("is")
+    sentence.add_word("good")
+    sentence.add_word("!")
+    return sentence
+
+def negative_sentence():
+    sentence = sentiment.Sentence(0)
+    sentence.add_word("this")
+    sentence.add_word("bad")
+    sentence.add_word(",")
+    sentence.add_word("bad")
+    sentence.add_word("movie")
+    sentence.add_word("is")
+    sentence.add_word("incredibly")
+    sentence.add_word("bad")
+    return sentence
+
+def basic_feature_vectors():
+    return ["movie", "good", "bad", "!"]
+
+def test_negative_sentence_feature_vectors():
+    sut = negative_sentence()
+
+    res = sut.get_feature_vectors(basic_feature_vectors())
+    assert res == [1, 3]
+
+    assert str(sut) == "0 1:1 3:1"
+
+def test_positive_sentence_feature_vectors():
+    sut = positive_sentence()
+
+    res = sut.get_feature_vectors(basic_feature_vectors())
+    assert res == [1, 2, 4]
+
+    assert str(sut) == "1 1:1 2:1 4:1"
+
+def test_neutral_sentence():
+    sut = sentiment.Sentence(1)
+    sut.add_word("so")
+    sut.add_word("exciting")
+
+    res = sut.get_feature_vectors(basic_feature_vectors())
+    assert res == []
+
+    assert str(sut) == "1"

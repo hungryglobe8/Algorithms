@@ -52,12 +52,35 @@ class Sentence():
         else:
             self.label = label
             self.words = []
+            self.features = []
 
     def add_word(self, word):
         '''
         Add a new word to the representation of a sentence.
         '''
         self.words.append(word)
+
+    def get_feature_vectors(self, data):
+        ''' 
+        Get the feature vectors for a sentence, according to a feature set.
+        Only adds the id of the feature set, if a word is found in it.
+        '''
+        self.features.clear()
+        for word in self.words:
+            word_id = get_feature_id(word, data)
+            # Append if a word is matched in data, and is not already in self.features.
+            if word_id != 0 and word_id not in self.features:
+                self.features.append(word_id)
+        # Sort features for future use.
+        self.features = sorted(self.features)
+        return self.features
+
+    def __str__(self):
+        data = self.features
+        data_str = ""
+        for elm in data:
+            data_str += f"{elm}:1 "
+        return f"{self.label} {data_str}".strip()
     
         
 def read_sentences_from_file(file_name):
@@ -93,6 +116,13 @@ def read_k_words_from_file(file_name, k):
     with open(file_name) as f:
         data = f.readlines()[:k]
     return [word.strip() for word in data]
+
+def get_feature_id(word, data):
+    ''' Return the feature ID of a given word. '''
+    if word in data:
+        return data.index(word) + 1
+    else:
+        return 0
 
 if (__name__ == "__main__"):
     # validate_len_args(sys.argv)
