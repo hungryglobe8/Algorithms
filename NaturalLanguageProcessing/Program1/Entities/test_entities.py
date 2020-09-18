@@ -1,5 +1,16 @@
 import pytest
 import entities
+test_folder = "./NaturalLanguageProcessing/Program1/Entities/"
+
+@pytest.mark.parametrize("word, expected", [
+    ("Israel", "yes"),
+    ("IBM", "yes"),
+    ("nothing", "no")
+])
+def test_capitalized(word, expected):
+    res = entities.tagged_word.is_capitalized(word) 
+    
+    assert res == expected
 
 def comparison_string(word, pos="n/a", abbr="n/a", cap="n/a"):
     return f"WORD: {word}\nPOS: {pos}\nABBR: {abbr}\n" + \
@@ -14,6 +25,13 @@ def test_tagged_word(word, pos, tags, expected):
     res = sut.readable_format(tags)
 
     assert res == expected
+
+def test_read_words_simple_file():
+    test_file = test_folder + "simple_test.txt"
+
+    sut = entities.read_words_from_file(test_file)
+
+    assert len(sut) == 23
 
 if __name__ == "__main__":
     test_tagged_word("Israel", "NNP", ["WORD", "CAP"], comparison_string("Israel", cap="yes"))
