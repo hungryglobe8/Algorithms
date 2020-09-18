@@ -1,0 +1,6 @@
+movie
+good
+bad
+!
+something
+else

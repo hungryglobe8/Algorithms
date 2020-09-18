@@ -55,9 +55,7 @@ class Sentence():
             self.features = []
 
     def add_word(self, word):
-        '''
-        Add a new word to the representation of a sentence.
-        '''
+        ''' Add a new word to the representation of a sentence. '''
         self.words.append(word)
 
     def get_feature_vectors(self, data):
@@ -124,10 +122,27 @@ def get_feature_id(word, data):
     else:
         return 0
 
+def make_file(old_file_name, sentences):
+    new_file_name = old_file_name + ".vector"
+    with open(new_file_name, 'w') as f:
+        f.writelines([str(sentence) + "\n" for sentence in sentences[:-1]])
+        f.write(str(sentences[-1]))
+
+def main(args):
+    validate_len_args(args)
+    validate_file_names(args)
+    train_file = read_sentences_from_file(sys.argv[1])
+    test_file = read_sentences_from_file(sys.argv[2])
+    k = int(sys.argv[4])
+    features = read_k_words_from_file(sys.argv[3], k)
+
+    for sentence in train_file:
+        sentence.get_feature_vectors(features)
+    for sentence in test_file:
+        sentence.get_feature_vectors(features)
+
+    make_file(sys.argv[1], train_file)
+    make_file(sys.argv[2], test_file)
+
 if (__name__ == "__main__"):
-    # validate_len_args(sys.argv)
-    # validate_file_names(sys.argv)
-    # train_file = read_sentences_from_file(sys.argv[1])
-    # test_file = read_sentences_from_file(sys.argv[2])
-    features = read_k_words_from_file(sys.argv[3], sys.argv[4])
-    # print ("Argument List:" + str(sys.argv))
+    main(sys.argv)

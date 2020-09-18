@@ -101,3 +101,18 @@ def test_neutral_sentence():
     assert res == []
 
     assert str(sut) == "1"
+
+def test_all_connected():
+    sentence_file = test_folder + "test_sentences.txt"
+    feature_file = test_folder + "test_features.txt"
+    sentences = sentiment.read_sentences_from_file(sentence_file)
+    features = sentiment.read_k_words_from_file(feature_file, 4)
+    
+    for sentence in sentences:
+        sentence.get_feature_vectors(features)
+    
+    sentiment.make_file(sentence_file, sentences)
+    assert 1 == 1
+
+    
+
