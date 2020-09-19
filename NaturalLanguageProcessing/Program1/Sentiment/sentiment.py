@@ -26,20 +26,8 @@ def validate_file_names(args):
     Don't forget to cd to NaturalLanguageProcessing!
     '''
     for arg in args[1:-1]:
-        print(arg)
         if not os.path.isfile(arg):
             raise ValueError(f"{arg} is not a valid file.")
-
-class Record(object):
-    """docstring for Record"""
-    def __init__(self, FNAME, SNAME, M1, M2, M3, M4):
-        super(Record, self).__init__()
-        self.FNAME = FNAME
-        self.SNAME = SNAME
-        self.M1 = M1
-        self.M2 = M2
-        self.M3 = M3
-        self.M4 = M4
 
 class Sentence():
     def __init__(self, label):
@@ -78,8 +66,7 @@ class Sentence():
         data_str = ""
         for elm in data:
             data_str += f"{elm}:1 "
-        return f"{self.label} {data_str}".strip()
-    
+        return f"{self.label} " + data_str.strip()
         
 def read_sentences_from_file(file_name):
     '''
