@@ -8,18 +8,3 @@ O DT the
 O   NN comedian
 B-PER   NNP Tuvia
 I-PER NNP Tzafir
-O  NNS    organizers
-O  NN    say.
-
-
-B-PER  NNP    Leroy
-I-PER  NNP    Ivy
-O  IN    of
-B-LOC  NNP    Oxford
-O  CC    and
-O  PP$    his
-O  NN    brother
-B-PER  NNP    John
-I-PER  NNP    Henry
-I-PER  NNP    Ivy
-O  IN    of

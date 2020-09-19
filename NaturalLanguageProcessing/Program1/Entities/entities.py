@@ -10,6 +10,7 @@ train_file = ""
 test_file = ""
 ftypes = ["WORD"]
 acceptable_ftypes = ["POSCON", "POS", "ABBR", "WORDCON", "CAP"]
+features = None
 
 def validate_len_args(args):
     ''' 
@@ -32,8 +33,10 @@ def validate_file_names(args):
             raise ValueError(f"{arg} is not a valid file.")
 
 class tagged_word():
-    ''' label is the class label. pos is the part-of-speech tag. '''
-    def __init__(self, label, pos, word):
+    class_labels = {"O": 0, "B-PER": 1, "I-PER": 2, "B-LOC": 3, "I-LOC": 4, "B-ORG": 5, "I-ORG": 6}
+
+    def __init__(self, label, pos, word, features):
+        ''' label is the class label. pos is the part-of-speech tag. '''
         self.label = label
         self.pos = pos
         self.word = word
@@ -41,8 +44,11 @@ class tagged_word():
         self.cap = self.is_capitalized(word)
         self.wordcon = "n/a"
         self.poscon = "n/a"
+        self.features = features
+        self.ftypes = {"WORD": self.word, "POS": self.pos, "ABBR": self.abbr, "CAP": self.cap, "WORDCON": self.wordcon, "POSCON": self.poscon}
 
-    def readable_format(self, features):
+
+    def readable_format(self):
         ''' 
         Print a human readable format of a word identified by its features.
         If a feature is not identified in features, print n/a.
@@ -51,14 +57,36 @@ class tagged_word():
         result = f"WORD: {self.word}\n"
         poss = {"POS": self.pos, "ABBR": self.abbr, "CAP": self.cap, "WORDCON": self.wordcon, "POSCON": self.poscon}
         for key, value in poss.items():
-            if key in features:
+            if key in self.features:
                 result += f"{key}: {value}\n"
             else:
                 result += f"{key}: n/a\n"
         return result.strip()
 
-    def feature_vector(self):
-        pass
+    def get_feature_vector(self, feature_set):
+        feature_str = str(self.class_labels[self.label]) + " "
+        for item in self.features:
+            feature = None
+            if item == "ABBR" and self.abbr == "yes":
+                feature = "is_abbreviated"
+            elif item == "CAP" and self.cap == "yes":
+                feature = "is_capitalized"
+            elif item == "WORD":
+                word = self.ftypes[item]
+                if word in feature_set:
+                    feature = word
+                else:
+                    feature = "UNK"
+            elif item == "POS":
+                pos = self.ftypes[item]
+                if pos in feature_set:
+                    feature = pos
+                else:
+                    feature = "UNKPOS"
+            else:
+                continue
+            feature_str += str(feature_set[feature]) + ":1 "
+        return feature_str.strip()
 
     @staticmethod
     def is_abbreviation(word):
@@ -94,6 +122,33 @@ class feature_vector():
             data_str += f"{elm}:1 "
         return f"{self.label} {data_str}".strip()
 
+def get_features(tagged_words, ftypes):
+    '''
+    Generate a feature set based off of several keywords. WORD should be first.
+    '''
+    # Gather all possible tags.
+    unique_words = list()
+    unique_pos = list()
+    for item in tagged_words:
+        if item.word not in unique_words:
+            unique_words.append(item.word)
+        if item.pos not in unique_pos:
+            unique_pos.append(item.pos)
+    unique_words.append("UNK")
+    unique_pos.append("UNKPOS")
+    #ABBR
+    abbr = ["is_abbreviated"]
+    #CAP
+    cap = ["is_capitalized"]
+    
+    # Append tags in the specified order.
+    order = {"WORD" : unique_words, "POSCON" : [], "POS" : unique_pos, "ABBR": abbr, "WORDCON": [], "CAP" : cap}
+    features = []
+    for ftype in ftypes:
+        features += order[ftype]
+
+    return features
+
 def feature_set(features):
     ''' 
     Make unique identifiers for all args.
@@ -106,7 +161,7 @@ def feature_set(features):
         id_number += 1
     return identifiers    
 
-def read_words_from_file(file_name):
+def read_words_from_file(file_name, features):
     ''' Read words in a file. Each word has attributes seperated by tabs and sentences are seperated by newline char. '''
     words = []
     with open(file_name) as f: 
@@ -122,11 +177,43 @@ def read_words_from_file(file_name):
                 continue
             
             # Add normal word.
-            prepared_word = tagged_word(word[0], word[1], word[2])
+            prepared_word = tagged_word(word[0], word[1], word[2], features)
             words.append(prepared_word)
 
+def make_readable_files(**kwargs):
+    for old_file_name, words in kwargs.items():
+        new_file_name = old_file_name + ".readable"
+        with open(new_file_name, 'w') as f:
+            f.writelines([word.readable_format() + "\n" for word in words[:-1]])
+            f.write(words[-1].readable_format())
+
+def make_feature_files(feature_set, **kwargs):
+    for old_file_name, words in kwargs.items():
+        new_file_name = old_file_name + ".vector"
+        with open(new_file_name, 'w') as f:
+            f.writelines([word.get_feature_vector(feature_set) + "\n" for word in words[:-1]])
+            f.write(words[-1].get_feature_vector(feature_set))
+
+def parse_args(args):
+    ''' Check validity and return args in necessary formats. '''
+    validate_len_args(args)
+    validate_file_names(args)
+    return args[1], args[2], args[3:]
+
 def main(args):
-    pass
+    train_file, test_file, features = parse_args(args)
+    # Save word lists.
+    train_words = read_words_from_file(train_file, features)
+    test_words = read_words_from_file(test_file, features)
+    # Link files and their respective words.
+    kwargs = {train_file: train_words, test_file: test_words}
+    # Make readable files.
+    make_readable_files(**kwargs)
+    # Get feature set.
+    partial_features = get_features(train_words, features)
+    full_feature_set_with_ids = feature_set(partial_features)
+    # Make feature vector files.
+    make_feature_files(full_feature_set_with_ids, **kwargs)
 
 if (__name__ == "__main__"):
     main(sys.argv)

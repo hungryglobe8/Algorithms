@@ -32,6 +32,34 @@ def test_read_words_simple_file():
     sut = entities.read_words_from_file(test_file)
 
     assert len(sut) == 23
+    
+def test_get_features():
+    test_file = test_folder + "simple_test.txt"
 
+    tagged_words = entities.read_words_from_file(test_file)
+
+    total = entities.get_features(tagged_words, ["WORD", "POS", "ABBR", "CAP"])
+    assert len(total) == 32
+
+    feature_set = entities.feature_set(total)
+    assert len(feature_set) == 32
+    assert list(feature_set.values()) == [x for x in range(1, 33)]
+        
+def test_get_word_feature_vector(order):
+    test_file = test_folder + "simple_test.txt"
+    words = entities.read_words_from_file(test_file)
+    feature_set = simple_feature_set(words, order)
+
+    for word in words:
+        print(word.get_feature_vector(order, feature_set))
+
+def simple_feature_set(words, order):
+    total = entities.get_features(words, order)
+    return entities.feature_set(total)
+    
 if __name__ == "__main__":
-    test_tagged_word("Israel", "NNP", ["WORD", "CAP"], comparison_string("Israel", cap="yes"))
+    order = ["WORD", "POS", "ABBR", "CAP"]
+    test_get_word_feature_vector(order)
+    print("switch")
+    order = ["WORD", "POSCON", "WORDCON", "POS", "ABBR", "CAP"]
+    test_get_word_feature_vector(order)
