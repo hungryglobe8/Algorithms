@@ -1,0 +1,69 @@
+WORD: Israel
+POS: NNP
+ABBR: n/a
+CAP: yes
+WORDCON: n/a
+POSCON: n/a
+
+WORD: television
+POS: NN
+ABBR: n/a
+CAP: no
+WORDCON: n/a
+POSCON: n/a
+
+WORD: rejected
+POS: VBD
+ABBR: n/a
+CAP: no
+WORDCON: n/a
+POSCON: n/a
+
+WORD: the
+POS: DT
+ABBR: n/a
+CAP: no
+WORDCON: n/a
+POSCON: n/a
+
+WORD: skit
+POS: NN
+ABBR: n/a
+CAP: no
+WORDCON: n/a
+POSCON: n/a
+
+WORD: by
+POS: IN
+ABBR: n/a
+CAP: no
+WORDCON: n/a
+POSCON: n/a
+
+WORD: the
+POS: DT
+ABBR: n/a
+CAP: no
+WORDCON: n/a
+POSCON: n/a
+
+WORD: comedian
+POS: NN
+ABBR: n/a
+CAP: no
+WORDCON: n/a
+POSCON: n/a
+
+WORD: Tuvia
+POS: NNP
+ABBR: n/a
+CAP: yes
+WORDCON: n/a
+POSCON: n/a
+
+WORD: Tzafir
+POS: NNP
+ABBR: n/a
+CAP: yes
+WORDCON: n/a
+POSCON: n/a

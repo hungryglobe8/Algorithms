@@ -47,21 +47,36 @@ class tagged_word():
         self.features = features
         self.ftypes = {"WORD": self.word, "POS": self.pos, "ABBR": self.abbr, "CAP": self.cap, "WORDCON": self.wordcon, "POSCON": self.poscon}
 
+    @staticmethod
+    def from_features(label, pos, word, features, feature_list):
+        if pos not in feature_list:
+            pos = "UNKPOS"
+        if word not in feature_list:
+            word = "UNK"
+        return tagged_word(label, pos, word, features)
 
-    def readable_format(self):
+    def readable_format(self, feature_list):
         ''' 
         Print a human readable format of a word identified by its features.
         If a feature is not identified in features, print n/a.
         Follows the order [WORD, POS, ABBR, CAP, WORDCON, POSCON].
         '''
+        # Check for unknown word.
+        if self.word not in feature_list:
+            self.word = "UNK"
         result = f"WORD: {self.word}\n"
         poss = {"POS": self.pos, "ABBR": self.abbr, "CAP": self.cap, "WORDCON": self.wordcon, "POSCON": self.poscon}
         for key, value in poss.items():
+            # Check for unkown pos.
+            if key == "POS":
+                if value not in feature_list:
+                    value = "UNKPOS"
+
             if key in self.features:
                 result += f"{key}: {value}\n"
             else:
                 result += f"{key}: n/a\n"
-        return result.strip()
+        return result
 
     def get_feature_vector(self, feature_set):
         feature_str = str(self.class_labels[self.label]) + " "
@@ -90,9 +105,7 @@ class tagged_word():
 
     @staticmethod
     def is_abbreviation(word):
-        if len(word) > 4:
-            return "no"
-        elif re.match(r"[a-zA-Z.]{,3}\.$", word):
+        if re.match(r"^[a-zA-Z][a-zA-Z.]{,2}\.$", word):
             return "yes"
         else:
             return "no"
@@ -180,12 +193,12 @@ def read_words_from_file(file_name, features):
             prepared_word = tagged_word(word[0], word[1], word[2], features)
             words.append(prepared_word)
 
-def make_readable_files(**kwargs):
+def make_readable_files(feature_set, **kwargs):
     for old_file_name, words in kwargs.items():
         new_file_name = old_file_name + ".readable"
         with open(new_file_name, 'w') as f:
-            f.writelines([word.readable_format() + "\n" for word in words[:-1]])
-            f.write(words[-1].readable_format())
+            f.writelines([word.readable_format(feature_set) + "\n" for word in words[:-1]])
+            f.write(words[-1].readable_format(feature_set).strip())
 
 def make_feature_files(feature_set, **kwargs):
     for old_file_name, words in kwargs.items():
@@ -207,11 +220,11 @@ def main(args):
     test_words = read_words_from_file(test_file, features)
     # Link files and their respective words.
     kwargs = {train_file: train_words, test_file: test_words}
-    # Make readable files.
-    make_readable_files(**kwargs)
     # Get feature set.
     partial_features = get_features(train_words, features)
     full_feature_set_with_ids = feature_set(partial_features)
+    # Make readable files.
+    make_readable_files(full_feature_set_with_ids, **kwargs)
     # Make feature vector files.
     make_feature_files(full_feature_set_with_ids, **kwargs)
 

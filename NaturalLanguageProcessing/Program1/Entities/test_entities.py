@@ -53,6 +53,14 @@ def test_get_word_feature_vector(order):
     for word in words:
         print(word.get_feature_vector(order, feature_set))
 
+def test_debug_mode():
+    train_file = test_folder + "trainE.txt"
+    test_file = test_folder + "testE.txt"
+    args = [None, train_file, test_file, "WORD"]
+
+    entities.main(args)
+
+
 def simple_feature_set(words, order):
     total = entities.get_features(words, order)
     return entities.feature_set(total)
