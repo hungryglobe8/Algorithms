@@ -5,9 +5,6 @@ as input and labels each sentence as Positive or Negative.
 '''
 import sys
 import os
-import re
-pcfg_file = ""
-sentences_file = ""
 
 def parse_args(args):
     ''' Check validity and return args in necessary formats. '''
@@ -63,6 +60,7 @@ def read_sentences_from_file(file_name):
                 sentences.append(Sentence(line))
 
 class Sentence():
+    ''' Contains a list of words seperated by whitespace. '''
     def __init__(self, line):
         self.words = line.split()
 
@@ -76,22 +74,35 @@ class Sentence():
         return res.strip()
 
 class Rule():
+    ''' 
+    Captures grammar rule from a single line formatted as:
+    LS -> NT NT Prob
+    LS -> T Prob
+    Prob isn't useful for the scope of this cky file.
+    NT and T are both saved as lists, although T is a singleton.
+    This makes using the right side of the rule easier and more flexible.
+    '''
     def __init__(self, line):
         tokens = line.split()
         self.left_side = tokens[0]
         if len(tokens) == 4:
-            self.terminals = tokens[2:3]
+            self.right_side = tokens[2:3]
         else:
-            self.terminals = tokens[2:4]
+            self.right_side = tokens[2:4]
         self.prob = tokens[-1]
 
     def __str__(self):
-        return f"{self.left_side}: {self.terminals}, {self.prob}"
-
-    def get_terminals(self):
-        return self.terminals
+        return f"{self.left_side}: {self.right_side}, {self.prob}"
 
 class Grammar():
+    '''
+    Contains a set of related rules.
+
+    Methods included:
+        Get all rules from grammar leading to a specific right-hand side.
+        Get all rules from grammar leading to possible combinations of two sets on the right-hand side.
+        Run cky algorithm and get a table and number of parses for a sentence.
+    '''
     def __init__(self):
         self.rules = list()
 
@@ -105,8 +116,8 @@ class Grammar():
         rules = set()
         # Go through all rules.
         for rule in self.rules:
-            # Check for word in terminals.
-            if right_side == rule.terminals:
+            # Check for match in right_side of rule.
+            if right_side == rule.right_side:
                 rules.add(rule.left_side)
 
         return rules
@@ -131,31 +142,34 @@ class Grammar():
 
         return rules, count
 
-def run_cfk(grammar, sentence):
-    length = len(sentence)
-    table = [[list() for col in range(length + 1)] for row in range(length + 1)]
-    num_parses = 0
-    # Iterate over columns.
-    for c in range(1, length + 1):
-        # Add non-terminals for the current word.
-        table[c][c] = grammar.get_rules_leading_to_word(sentence.words[c - 1:c])
-        # Iterate over rows, from bottom to top.
-        for r in range(c-1, 0, -1):
-            # Explore all partionings for words 1 through c.
-            for s in range(r+1, c+1):
-                b_words = table[r][s-1]
-                c_words = table[s][c]
-                if b_words is None or c_words is None:
-                    pass
-                else:
-                    new_rules, count = grammar.get_rules_leading_to_non_terminals(b_words, c_words)
-                    if c == length and r == 1:
-                        num_parses += count
-                    table[r][c] = table[r][c] + new_rules
+    def run_cky(self, sentence):
+        ''' 
+        Generate a cky table and the number of parses available for a sentence.
+        '''
+        length = len(sentence)
+        table = [[list() for col in range(length + 1)] for row in range(length + 1)]
+        num_parses = 0
+        # Iterate over columns.
+        for c in range(1, length + 1):
+            # Add non-terminals for the current word.
+            table[c][c] = self.get_rules_leading_to_word(sentence.words[c - 1:c])
+            # Iterate over rows, from bottom to top.
+            for r in range(c-1, 0, -1):
+                # Explore all partionings for words 1 through c.
+                for s in range(r+1, c+1):
+                    b_words = table[r][s-1]
+                    c_words = table[s][c]
+                    if b_words is None or c_words is None:
+                        pass
+                    else:
+                        new_rules, count = self.get_rules_leading_to_non_terminals(b_words, c_words)
+                        if c == length and r == 1:
+                            num_parses += count
+                        table[r][c] = table[r][c] + new_rules
 
-    return table, num_parses
+        return table, num_parses
 
-def print_cfk(sentence, num_parses, table):
+def print_cky(sentence, num_parses, table):
     # Heading information.
     print(f"PARSING SENTENCE: {str(sentence)}")
     print(f"NUMBER OF PARSES FOUND: {num_parses}")
@@ -175,21 +189,6 @@ def print_cfk(sentence, num_parses, table):
             print(f"cell[{r},{c}]: {str_result}")
     # New line.
     print()
-    
-def make_readable_files(feature_set, **kwargs):
-    for old_file_name, words in kwargs.items():
-        new_file_name = old_file_name + ".readable"
-        with open(new_file_name, 'w') as f:
-            f.writelines([word.readable_format(feature_set) + "\n" for word in words[:-1]])
-            f.write(words[-1].readable_format(feature_set).strip())
-
-def make_feature_files(feature_set, **kwargs):
-    for old_file_name, words in kwargs.items():
-        new_file_name = old_file_name + ".vector"
-        with open(new_file_name, 'w') as f:
-            f.writelines([word.get_feature_vector(feature_set) + "\n" for word in words[:-1]])
-            f.write(words[-1].get_feature_vector(feature_set))
-
 
 def main(args):
     pcfg_file, sentences_file = parse_args(args)
@@ -198,9 +197,9 @@ def main(args):
     grammar = read_grammar_from_file(pcfg_file)
     # Run cky on each sentence.
     for sentence in sentences:
-        table, num_parses = run_cfk(grammar, sentence)
-        print_cfk(sentence, num_parses, table)
-    # print again?
+        table, num_parses = grammar.run_cky(sentence)
+        print_cky(sentence, num_parses, table)
+    # print again at end?
 
 if (__name__ == "__main__"):
     main(sys.argv)
