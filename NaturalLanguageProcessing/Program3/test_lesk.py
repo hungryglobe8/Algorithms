@@ -22,8 +22,35 @@ def test_single_sense_stored_correctly():
 
     res = senses[0]
 
-    assert res.sense == "phone"
+    assert res.root == "phone"
     assert len(res.definition) == 3
     assert len(res.example) == 4
 
-test_single_sense_stored_correctly()
+def test_read_stopwords():
+    test_file = test_folder + "stopwords.txt"
+
+    stopwords = lesk.read_from_file(test_file)
+
+    assert len(stopwords) == 179
+
+def test_get_context():
+    test_file = test_folder + "stopwords.txt"
+    test_sentence = lesk.Sentence("I went to the store a day . what to do? store went")
+    stopwords = lesk.read_from_file(test_file)
+
+    res = lesk.get_context(stopwords, test_sentence.words)
+
+    assert len(res) == 4
+
+def test_print_lesk():
+    lesk_dict = {
+        4: ["banana", "grape", "apple", "donut"],
+        1: ["mess"],
+        3: ["tooth", "cat"]
+        }
+
+    res = lesk.get_ordered_lesk(lesk_dict)
+
+    assert res == 'apple(4) banana(4) donut(4) grape(4) cat(3) tooth(3) mess(1)'
+
+print(test_print_lesk())

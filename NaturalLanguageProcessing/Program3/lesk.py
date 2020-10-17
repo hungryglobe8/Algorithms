@@ -5,8 +5,7 @@ to determine the best sense for each instance of a target word.
 Can be run as:
 python3 lesk.py test.txt definitions.txt stopwords.txt
 '''
-import sys
-import os
+import sys, os, re, math
 
 def parse_args(args):
     ''' Check validity and return args in necessary formats. '''
@@ -50,7 +49,7 @@ def read_from_file(file_name, class_name=None):
                 if class_name is not None:
                     sentences.append(class_name(line))
                 else:
-                    sentences.append(line)
+                    sentences.append(line.strip())
 
 class Sentence():
     ''' Contains a list of words surrounding a target word. '''
@@ -76,142 +75,73 @@ class Sense():
     ''' Contains a sense, the definition, and an example sentence. '''
     def __init__(self, line):
         sections = line.split('\t')
-        self.sense = sections[0]
+        self.root = sections[0]
         self.definition = sections[1].split()
         self.example = sections[2].split()
 
     def __str__(self):
-        return f"{self.sense}: {' '.join(self.definition)}\n\t{' '.join(self.example)}"
+        return f"{self.root}: {' '.join(self.definition)}\n\t{' '.join(self.example)}"
 
-class Rule():
-    ''' 
-    Captures grammar rule from a single line formatted as:
-    LS -> NT NT Prob
-    LS -> T Prob
-    Prob isn't useful for the scope of this cky file.
-    NT and T are both saved as lists, although T is a singleton.
-    This makes using the right side of the rule easier and more flexible.
-    '''
-    def __init__(self, line):
-        tokens = line.split()
-        self.left_side = tokens[0]
-        if len(tokens) == 4:
-            self.right_side = tokens[2:3]
+    # def __lt__(self, other):
+    #     return self.root < other.root
+
+def get_context(stopwords, words):
+    ''' Returns a list of valid words from a list of words (not in stopwords or punctuation). '''
+    res = set()
+    for word in words:
+        word = word.lower()
+        if word not in stopwords and re.match(r"[a-z]", word):
+            res.add(word)
+    return res
+
+def compute_overlap(signature, context):
+    ''' Returns the number of elements in common between two sets. '''
+    return len(signature.intersection(context))
+
+def run_lesk(senses, stopwords, sentence):
+    ''' Returns a string as a ranked list of overlaps of sense definitions with a sentence. '''
+    lesk_dict = {}
+    context = get_context(stopwords, sentence)
+    for sense in senses:
+        signature = get_context(stopwords, sense.definition).union(get_context(stopwords, sense.example))
+        overlap = compute_overlap(signature, context)
+        if overlap in lesk_dict.keys():
+            lesk_dict[overlap].append(sense.root)
         else:
-            self.right_side = tokens[2:4]
-        self.prob = tokens[-1]
-
-    def __str__(self):
-        return f"{self.left_side}: {self.right_side}, {self.prob}"
-
-class Grammar():
-    '''
-    Contains a set of related rules.
-
-    Methods included:
-        Get all rules from grammar leading to a specific right-hand side.
-        Get all rules from grammar leading to possible combinations of two sets on the right-hand side.
-        Run cky algorithm and get a table and number of parses for a sentence.
-    '''
-    def __init__(self):
-        self.rules = list()
-
-    def __len__(self):
-        return len(self.rules)
-
-    def add_rule(self, rule):
-        self.rules.append(rule)
-
-    def get_rules_leading_to_word(self, right_side):
-        rules = set()
-        # Go through all rules.
-        for rule in self.rules:
-            # Check for match in right_side of rule.
-            if right_side == rule.right_side:
-                rules.add(rule.left_side)
-
-        return rules
+            lesk_dict[overlap] = [sense.root]
     
-    def get_rules_leading_to_non_terminals(self, b_words, c_words):
-        '''
-        Get all rules of the form A -> BC for all possible combinations from
-            b_words and c_words.
-        '''
-        rules = list()
-        count = 0
-        # Go through all possible combinations of b_words and c_words, adding unique ones.
-        for b in b_words:
-            for c in c_words:
-                poss = self.get_rules_leading_to_word([b, c])
-                if len(poss) == 0:
-                    pass
-                else:
-                    count += 1
-                    for elm in poss:
-                        rules.append(elm)
+    return get_ordered_lesk(lesk_dict)
 
-        return rules, count
+def get_ordered_lesk(dictionary):
+    ''' Return a sorted string of a dictionary set up with integers as the keys and strings as values. '''
+    res = ""
+    # Continue the loop until there is nothing left in the dictionary.
+    while len(dictionary) != 0:
+        max_value = max(dictionary.keys())
+        sorted_strings = sorted(dictionary[max_value])
+        for string in sorted_strings:
+            res += f"{string}({max_value}) "
+        
+        dictionary.pop(max_value)
+    # Remove trailing whitespace.
+    return res.strip()
 
-    def run_cky(self, sentence):
-        ''' 
-        Generate a cky table and the number of parses available for a sentence.
-        '''
-        length = len(sentence)
-        table = [[list() for col in range(length + 1)] for row in range(length + 1)]
-        num_parses = 0
-        # Iterate over columns.
-        for c in range(1, length + 1):
-            # Add non-terminals for the current word.
-            table[c][c] = self.get_rules_leading_to_word(sentence.words[c - 1:c])
-            # Iterate over rows, from bottom to top.
-            for r in range(c-1, 0, -1):
-                # Explore all partionings for words 1 through c.
-                for s in range(r+1, c+1):
-                    b_words = table[r][s-1]
-                    c_words = table[s][c]
-                    if b_words is None or c_words is None:
-                        pass
-                    else:
-                        new_rules, count = self.get_rules_leading_to_non_terminals(b_words, c_words)
-                        if c == length and r == 1:
-                            num_parses += count
-                        table[r][c] = table[r][c] + new_rules
-
-        return table, num_parses
-
-def print_cky(sentence, num_parses, table):
-    # Heading information.
-    print(f"PARSING SENTENCE: {str(sentence)}")
-    print(f"NUMBER OF PARSES FOUND: {num_parses}")
-    print("TABLE:")
-    # Table.
-    length = len(table[0])
-    for r in range(1, length):
-        for c in range(r, length):
-            entries = table[r][c]
-            str_result = ""
-            if len(entries) == 0:
-                str_result = "-"
-            else:
-                for entry in sorted(entries):
-                    str_result += f"{entry} "
-                str_result = str_result.strip()
-            print(f"cell[{r},{c}]: {str_result}")
-    # New line.
-    print()
+def make_file(old_file_name, text):
+    new_file_name = old_file_name + ".lesk"
+    with open(new_file_name, 'w') as f:
+        f.writelines(text)
 
 def main(args):
     test_file, definitions_file, stopwords_file = parse_args(args)
     # Read from files.
     sentences = read_from_file(test_file, Sentence)
-    senses = read_from_file(definitions_file, Sence)
+    senses = read_from_file(definitions_file, Sense)
     stopwords = read_from_file(stopwords_file)
-    #grammar = read_grammar_from_file(pcfg_file)
-    # Run cky on each sentence.
-    #for sentence in sentences:
-    #    table, num_parses = grammar.run_cky(sentence)
-    #    print_cky(sentence, num_parses, table)
-    # print again at end?
+    # Run lesk algorithm on each sentence.
+    for sentence in sentences:
+        ordered_senses = run_lesk(senses, stopwords, sentence.words)
+    # Print results to new .lesk file.
+    make_file(test_file, ordered_senses)
 
 if (__name__ == "__main__"):
     main(sys.argv)
