@@ -1,9 +1,8 @@
 '''
-Contains an implementation of a simplified Lesk algorithm
-to determine the best sense for each instance of a target word.
+Implementation of nearest-neighbor matching using distributional similarity.
 
 Can be run as:
-python3 lesk.py test.txt definitions.txt stopwords.txt
+python3 distsim.py train.txt test.txt stopwords.txt 2 
 '''
 import sys, os, re, math
 
@@ -11,14 +10,14 @@ def parse_args(args):
     ''' Check validity and return args in necessary formats. '''
     validate_len_args(args)
     validate_file_names(args)
-    return args[1], args[2], args[3]
+    return args[1], args[2], args[3], args[4]
 
 def validate_len_args(args):
     ''' 
-    There should be 3 arguments following lesk.py in the command line.
+    There should be 4 arguments following lesk.py in the command line.
     '''
-    if len(args) != 4:
-        raise ValueError("There should be three arguments following your program.")
+    if len(args) != 5:
+        raise ValueError("There should be four arguments following your program.")
     
 def validate_file_names(args):
     '''
@@ -45,7 +44,6 @@ def read_from_file(file_name, class_name=None):
 
             # Sentence has words.
             if line != []:
-                # Might not work
                 if class_name is not None:
                     sentences.append(class_name(line))
                 else:
@@ -70,6 +68,14 @@ class Sentence():
         for word in self.words:
             res += f"{word} "
         return res.strip()
+        
+class GoldSentence(Sentence):
+    ''' Goldsentence is like a normal sentence but with a gold-label tag at the beginning. '''
+    def __init__(self, line):
+        sections = line.split('\t')
+        lead = "GOLDSENSE:"
+        self.sense = sections[0].lstrip(lead)
+        Sentence.__init__(self, sections[1])
 
 class Sense():
     ''' Contains a sense, the definition, and an example sentence. '''
@@ -132,10 +138,10 @@ def make_file(old_file_name, text):
         f.writelines('\n'.join(text))
 
 def main(args):
-    test_file, definitions_file, stopwords_file = parse_args(args)
+    training_file, test_file, stopwords_file, k = parse_args(args)
     # Read from files.
+    goldsense = read_from_file(test_file, GoldSentence)
     sentences = read_from_file(test_file, Sentence)
-    senses = read_from_file(definitions_file, Sense)
     stopwords = read_from_file(stopwords_file)
     # Run lesk algorithm on each sentence.
     text = []

@@ -52,5 +52,3 @@ def test_print_lesk():
     res = lesk.get_ordered_lesk(lesk_dict)
 
     assert res == 'apple(4) banana(4) donut(4) grape(4) cat(3) tooth(3) mess(1)'
-
-print(test_print_lesk())
