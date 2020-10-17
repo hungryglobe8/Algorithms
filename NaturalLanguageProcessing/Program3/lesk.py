@@ -46,38 +46,11 @@ def read_from_file(file_name, class_name=None):
 
             # Sentence has words.
             if line != []:
+                # Might not work
                 if class_name is not None:
                     sentences.append(class_name(line))
                 else:
                     sentences.append(line)
-
-def read_sentences_from_file(file_name):
-    ''' Read sentences in a file. Each sentence is seperated by newline char and has words seperated by whitespace. '''
-    sentences = []
-    with open(file_name) as f: 
-        while(True):
-            line = f.readline()
-            # Last sentence complete.
-            if not line:
-                return sentences
-
-            # Sentence has words.
-            if line != []:
-                sentences.append(Sentence(line))
-
-def read_senses_from_file(file_name):
-    ''' Read senses from a file. Word is tab-seperated from definition and example. '''
-    senses = []
-    with open(file_name) as f: 
-        while(True):
-            line = f.readline()
-            # Last sentence complete.
-            if not line:
-                return senses
-
-            # Sentence has words.
-            if line != []:
-                senses.append(Sense(line))
 
 class Sentence():
     ''' Contains a list of words surrounding a target word. '''
