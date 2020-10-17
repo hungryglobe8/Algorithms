@@ -31,18 +31,25 @@ def validate_file_names(args):
         if not os.path.isfile(arg):
             raise ValueError(f"{arg} is not a valid file.")
 
-def read_grammar_from_file(file_name):
-    ''' Read words in a file. Each word has attributes seperated by tabs and sentences are seperated by newline char. '''
-    grammar = Grammar()
+def read_from_file(file_name, class_name=None):
+    ''' 
+    Read something from a file. Scans by new lines and class_name specifies how to parse the line.
+    If class_name is not specified, return a straight list the file seperated by newlines.
+    '''
+    sentences = []
     with open(file_name) as f: 
         while(True):
             line = f.readline()
             # Last sentence complete.
             if not line:
-                return grammar
+                return sentences
 
+            # Sentence has words.
             if line != []:
-                grammar.add_rule(Rule(line))
+                if class_name is not None:
+                    sentences.append(class_name(line))
+                else:
+                    sentences.append(line)
 
 def read_sentences_from_file(file_name):
     ''' Read sentences in a file. Each sentence is seperated by newline char and has words seperated by whitespace. '''
@@ -223,8 +230,9 @@ def print_cky(sentence, num_parses, table):
 def main(args):
     test_file, definitions_file, stopwords_file = parse_args(args)
     # Read from files.
-    sentences = read_sentences_from_file(test_file)
-    senses = read_senses_from_file(definitions_file)
+    sentences = read_from_file(test_file, Sentence)
+    senses = read_from_file(definitions_file, Sence)
+    stopwords = read_from_file(stopwords_file)
     #grammar = read_grammar_from_file(pcfg_file)
     # Run cky on each sentence.
     #for sentence in sentences:

@@ -5,20 +5,20 @@ test_folder = "./NaturalLanguageProcessing/Program3/data/"
 def test_read_sentences():
     test_file = test_folder + "test.txt"
 
-    res = lesk.read_sentences_from_file(test_file)
+    res = lesk.read_from_file(test_file, lesk.Sentence)
 
     assert len(res) == 6
 
 def test_read_definitions():
     test_file = test_folder + "definitions.txt"
 
-    senses = lesk.read_senses_from_file(test_file)
+    senses = lesk.read_from_file(test_file, lesk.Sense)
 
     assert len(senses) == 6
 
 def test_single_sense_stored_correctly():
     test_file = test_folder + "definitions.txt"
-    senses = lesk.read_senses_from_file(test_file)
+    senses = lesk.read_from_file(test_file, lesk.Sense)
 
     res = senses[0]
 
