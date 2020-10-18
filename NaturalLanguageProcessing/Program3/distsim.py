@@ -55,9 +55,10 @@ class Sentence():
         self.words = line.split()
         lead = "<occurrence>"
         tail = "</>"
-        for word in self.words:
+        for i, word in enumerate(self.words):
             if word.startswith(lead) and word.endswith(tail):
                 self.root = word.lstrip(lead).rstrip(tail)
+                self.pos = i
                 return
 
     def __len__(self):
@@ -68,6 +69,42 @@ class Sentence():
         for word in self.words:
             res += f"{word} "
         return res.strip()
+
+    def get_vocab(self, k, stopwords):
+        ''' 
+        Get k distinct values next to the target word.
+        Base case k = 0:
+            Return the whole sentence (as distinct values)
+        Treat words as case-insensitive and they must have letters.
+        '''
+        res = set()
+        # Base case whole sentence.
+        if k == 0:
+            for word in self.words:
+                word = word.lower()
+                if word not in stopwords and re.match(r"[a-z]", word):
+                    res.add(word)
+
+        # Get k words in front and behind the root word.
+        else:
+            # Get correct lower and upper bounds.
+            low = self.pos - k
+            if low < 0:
+                low = 0
+            high = self.pos + k + 1
+            if high > len(self.words):
+                high = len(self.words)
+
+            for word in self.words[low:high]:
+                word = word.lower()
+                if word not in stopwords and re.match(r"[a-z]", word) is not None:
+                    res.add(word)
+        
+        print(res)
+        # Remove root word.
+        # res.remove("<occurrence>" + self.root + "</>")
+        return res
+
         
 class GoldSentence(Sentence):
     ''' Goldsentence is like a normal sentence but with a gold-label tag at the beginning. '''
