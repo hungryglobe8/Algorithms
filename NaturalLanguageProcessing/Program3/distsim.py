@@ -92,6 +92,74 @@ class Sense():
     # def __lt__(self, other):
     #     return self.root < other.root
 
+class Signature_Vector():
+    ''' Signature vector for a sense. '''
+    def __init__(self, vocab, sense=None):
+        self.sense = sense
+        self.vector = dict()
+        for word in vocab:
+            self.vector[word] = 0
+
+    def add_sentence(self, k, sentence):
+        # Get correct lower and upper bounds.
+        low = sentence.pos - k
+        if low < 0:
+            low = 0
+        high = sentence.pos + k + 1
+        if high > len(sentence.words):
+            high = len(sentence.words)
+
+        for word in sentence.words[low:high]:
+            word = word.lower()
+            if word in self.vector.keys():
+                self.vector[word] += 1
+    
+    def cosine_sim(self, other, sense):
+        x_vec = list(self.vector.values())
+        y_vec = list(other.vector.values())
+
+        # Calculate numerator.
+        num = 0
+        for i in range(len(x_vec)):
+            num += (x_vec[i] * y_vec[i])
+        #print(f"num is {num}")
+
+        # Calculate denominator.
+        denom = 0
+        x_den = sum(x**2 for x in x_vec) ** .5
+        y_den = sum(y**2 for y in y_vec) ** .5
+        denom = x_den * y_den
+        #print(f"denom is {denom}")
+
+        # Don't allow for division by 0.
+        if denom == 0:
+            return 0
+        else:
+            return (sense, round(num/denom, 2))
+
+    def __str__(self):
+        return f"{self.sense}: {self.vector.values()}"
+
+def get_unique_senses(goldSentences):
+    ''' Return unique senses for a series of goldSentences. '''
+    return sorted(set([sentence.sense for sentence in goldSentences]))
+
+def make_sig_vectors(senses, sentences, vocab, k):
+    vectors = {sense: Signature_Vector(vocab, sense) for sense in senses}
+
+    for sentence in sentences:
+        vectors[sentence.sense].add_sentence(k, sentence)
+
+    return vectors
+
+def make_norm_sig_vectors(senses, sentences, vocab, k):
+    vectors = {sentence: Signature_Vector(vocab) for sentence in sentences}
+
+    for sentence in sentences:
+        vectors[sentence].add_sentence(k, sentence)
+
+    return vectors
+
 def get_context(stopwords, words):
     ''' Returns a list of valid words from a list of words (not in stopwords or punctuation). '''
     res = set()
@@ -139,7 +207,7 @@ def make_file(old_file_name, text):
         f.writelines('\n'.join(text))
 
         
-def get_vocab(sentences, k, stopwords):
+def get_context_window(sentences, k, stopwords, unique=True):
     ''' 
     Get k distinct values next to the target word.
     Base case k = 0:
@@ -151,9 +219,7 @@ def get_vocab(sentences, k, stopwords):
         # Base case whole sentence.
         if k == 0:
             for word in sentence.words:
-                word = word.lower()
-                if word not in stopwords and re.match(r"[a-z]", word):
-                    res.append(word)
+                add_if_unique(res, word, stopwords)
 
         # Get k words in front and behind the root word.
         else:
@@ -166,12 +232,30 @@ def get_vocab(sentences, k, stopwords):
                 high = len(sentence.words)
 
             for word in sentence.words[low:high]:
-                word = word.lower()
-                # TODO - Fix regex to get words with any lowercase.
-                if word not in stopwords and re.match(r"[a-z]", word) is not None:
-                    res.append(word)
+                add_if_unique(res, word, stopwords)
         
-    return sorted(list(set([x for x in res if (res.count(x) > 1)])))
+    # Return unique or all occurrences.
+    if unique:
+        return sorted(list(set([x for x in res if (res.count(x) > 1)])))
+    else:
+        return sorted(res)
+
+def add_if_unique(container, word, stopwords):
+    ''' Add a lowercase word to a list if it has characters and is not a stopword. '''
+    word = word.lower()
+    if word not in stopwords and re.match(r"[a-z]", word):
+        container.append(word)
+
+def sorted_scores(lst):
+    res = ""
+    for sentence in lst:
+        # Sort by weight then alphabetically.
+        sentence.sort(key=lambda x: (-x[1], x[0]))
+        # Add results to a string.
+        for sense, weight in sentence:
+            res += f"{sense}({weight:.2f}) "
+        res = res.strip() + "\n"
+    return res
 
 def main(args):
     training_file, test_file, stopwords_file, k = parse_args(args)
