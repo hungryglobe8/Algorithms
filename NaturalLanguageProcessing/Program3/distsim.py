@@ -70,42 +70,6 @@ class Sentence():
             res += f"{word} "
         return res.strip()
 
-    def get_vocab(self, k, stopwords):
-        ''' 
-        Get k distinct values next to the target word.
-        Base case k = 0:
-            Return the whole sentence (as distinct values)
-        Treat words as case-insensitive and they must have letters.
-        '''
-        res = set()
-        # Base case whole sentence.
-        if k == 0:
-            for word in self.words:
-                word = word.lower()
-                if word not in stopwords and re.match(r"[a-z]", word):
-                    res.add(word)
-
-        # Get k words in front and behind the root word.
-        else:
-            # Get correct lower and upper bounds.
-            low = self.pos - k
-            if low < 0:
-                low = 0
-            high = self.pos + k + 1
-            if high > len(self.words):
-                high = len(self.words)
-
-            for word in self.words[low:high]:
-                word = word.lower()
-                if word not in stopwords and re.match(r"[a-z]", word) is not None:
-                    res.add(word)
-        
-        print(res)
-        # Remove root word.
-        # res.remove("<occurrence>" + self.root + "</>")
-        return res
-
-        
 class GoldSentence(Sentence):
     ''' Goldsentence is like a normal sentence but with a gold-label tag at the beginning. '''
     def __init__(self, line):
@@ -174,6 +138,41 @@ def make_file(old_file_name, text):
     with open(new_file_name, 'w') as f:
         f.writelines('\n'.join(text))
 
+        
+def get_vocab(sentences, k, stopwords):
+    ''' 
+    Get k distinct values next to the target word.
+    Base case k = 0:
+        Return the whole sentence (as distinct values)
+    Treat words as case-insensitive and they must have letters.
+    '''
+    res = list()
+    for sentence in sentences:
+        # Base case whole sentence.
+        if k == 0:
+            for word in sentence.words:
+                word = word.lower()
+                if word not in stopwords and re.match(r"[a-z]", word):
+                    res.append(word)
+
+        # Get k words in front and behind the root word.
+        else:
+            # Get correct lower and upper bounds.
+            low = sentence.pos - k
+            if low < 0:
+                low = 0
+            high = sentence.pos + k + 1
+            if high > len(sentence.words):
+                high = len(sentence.words)
+
+            for word in sentence.words[low:high]:
+                word = word.lower()
+                # TODO - Fix regex to get words with any lowercase.
+                if word not in stopwords and re.match(r"[a-z]", word) is not None:
+                    res.append(word)
+        
+    return sorted(list(set([x for x in res if (res.count(x) > 1)])))
+
 def main(args):
     training_file, test_file, stopwords_file, k = parse_args(args)
     # Read from files.
@@ -183,7 +182,7 @@ def main(args):
     # Run lesk algorithm on each sentence.
     text = []
     for sentence in sentences:
-        ordered_senses = run_lesk(senses, stopwords, sentence.words)
+        ordered_senses = run_lesk(sentences, stopwords, sentence.words)
         text.append(ordered_senses)
     # Print results to new .lesk file.
     make_file(test_file, text)

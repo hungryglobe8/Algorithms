@@ -24,7 +24,7 @@ def test_get_vocab_with_k():
     sentences = distsim.read_from_file(test_file, distsim.Sentence)
     stopwords = distsim.read_from_file(stopwords_file)
     
-    for sentence in sentences:
-        sentence.get_vocab(0, stopwords)
+    res = distsim.get_vocab(sentences, 0, stopwords)
+    assert len(res) == 11
 
 test_get_vocab_with_k()
