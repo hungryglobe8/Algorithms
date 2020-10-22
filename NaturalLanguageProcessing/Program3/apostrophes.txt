@@ -1,0 +1,4 @@
+GOLDSENSE:cord	've 'd rip <occurrence>line</> 've 'd table
+GOLDSENSE:cord	'll <occurrence>line</> 'll
+GOLDSENSE:cord	'sh <occurrence>line</> 'sh
+GOLDSENSE:cord	's <occurrence>line</> 's

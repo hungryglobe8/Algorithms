@@ -113,29 +113,33 @@ class Signature_Vector():
             word = word.lower()
             if word in self.vector.keys():
                 self.vector[word] += 1
-    
-    def cosine_sim(self, other, sense):
+
+    def compare(self, other):
+        ''' Compare the cosine similarity between two Signature Vectors. '''
         x_vec = list(self.vector.values())
         y_vec = list(other.vector.values())
 
+        return self.cosine_sim(x_vec, y_vec)
+
+    @staticmethod
+    def cosine_sim(x_vec, y_vec):
+        ''' Calculates the cosine similarity between two numeric lists. Returns 0 if the denominator is 0. '''
         # Calculate numerator.
         num = 0
         for i in range(len(x_vec)):
             num += (x_vec[i] * y_vec[i])
-        #print(f"num is {num}")
 
         # Calculate denominator.
         denom = 0
         x_den = sum(x**2 for x in x_vec) ** .5
         y_den = sum(y**2 for y in y_vec) ** .5
         denom = x_den * y_den
-        #print(f"denom is {denom}")
 
         # Don't allow for division by 0.
         if denom == 0:
             return 0
         else:
-            return (sense, round(num/denom, 2))
+            return round(num/denom, 2)
 
     def __str__(self):
         return f"{self.sense}: {self.vector.values()}"
@@ -159,53 +163,6 @@ def make_norm_sig_vectors(senses, sentences, vocab, k):
         vectors[sentence].add_sentence(k, sentence)
 
     return vectors
-
-def get_context(stopwords, words):
-    ''' Returns a list of valid words from a list of words (not in stopwords or punctuation). '''
-    res = set()
-    for word in words:
-        word = word.lower()
-        if word not in stopwords and re.match(r"[a-z]", word):
-            res.add(word)
-    return res
-
-def compute_overlap(signature, context):
-    ''' Returns the number of elements in common between two sets. '''
-    return len(signature.intersection(context))
-
-def run_lesk(senses, stopwords, sentence):
-    ''' Returns a string as a ranked list of overlaps of sense definitions with a sentence. '''
-    lesk_dict = {}
-    context = get_context(stopwords, sentence)
-    for sense in senses:
-        signature = get_context(stopwords, sense.definition).union(get_context(stopwords, sense.example))
-        overlap = compute_overlap(signature, context)
-        if overlap in lesk_dict.keys():
-            lesk_dict[overlap].append(sense.root)
-        else:
-            lesk_dict[overlap] = [sense.root]
-    
-    return get_ordered_lesk(lesk_dict)
-
-def get_ordered_lesk(dictionary):
-    ''' Return a sorted string of a dictionary set up with integers as the keys and strings as values. '''
-    res = ""
-    # Continue the loop until there is nothing left in the dictionary.
-    while len(dictionary) != 0:
-        max_value = max(dictionary.keys())
-        sorted_strings = sorted(dictionary[max_value])
-        for string in sorted_strings:
-            res += f"{string}({max_value}) "
-        
-        dictionary.pop(max_value)
-    # Remove trailing whitespace.
-    return res.strip()
-
-def make_file(old_file_name, text):
-    new_file_name = old_file_name + ".lesk"
-    with open(new_file_name, 'w') as f:
-        f.writelines('\n'.join(text))
-
         
 def get_context_window(sentences, k, stopwords, unique=True):
     ''' 
@@ -243,8 +200,19 @@ def get_context_window(sentences, k, stopwords, unique=True):
 def add_if_unique(container, word, stopwords):
     ''' Add a lowercase word to a list if it has characters and is not a stopword. '''
     word = word.lower()
-    if word not in stopwords and re.match(r"[a-z]", word):
+    if word not in stopwords and re.search(r"[a-z]", word) and not word.startswith("<occurrence>"):
         container.append(word)
+
+def get_scores(test_sig_vecs, train_sig_vecs):
+    ''' Return a list of sorted cosine scores for test sentences. '''
+    test_scores = list()
+    for vec in test_sig_vecs.values():
+        sentence_scores = list()
+        for other_vec in train_sig_vecs.values():
+            sentence_scores.append((other_vec.sense, vec.compare(other_vec)))
+        test_scores.append(sentence_scores)
+
+    return sorted_scores(test_scores)
 
 def sorted_scores(lst):
     res = ""
@@ -255,21 +223,34 @@ def sorted_scores(lst):
         for sense, weight in sentence:
             res += f"{sense}({weight:.2f}) "
         res = res.strip() + "\n"
-    return res
+    return res.strip()
+
+def make_file(old_file_name, num_train, num_test, num_senses, voc_size, res):
+    new_file_name = old_file_name + ".distsim.my"
+    with open(new_file_name, 'w') as f:
+        f.writeline(f"Number of Training Sentences = {num_train}")
+        f.writeline(f"Number of Test Sentences = {num_test}")
+        f.writeline(f"Number of Gold Senses = {num_senses}")
+        f.writeline(f"Vocabulary Size = {voc_size}")
+        f.writeline(f"{res}")
 
 def main(args):
     training_file, test_file, stopwords_file, k = parse_args(args)
     # Read from files.
-    goldsense = read_from_file(test_file, GoldSentence)
-    sentences = read_from_file(test_file, Sentence)
+    training_sentences = read_from_file(training_file, GoldSentence)
+    test_sentences = read_from_file(test_file, Sentence)
     stopwords = read_from_file(stopwords_file)
-    # Run lesk algorithm on each sentence.
-    text = []
-    for sentence in sentences:
-        ordered_senses = run_lesk(sentences, stopwords, sentence.words)
-        text.append(ordered_senses)
-    # Print results to new .lesk file.
-    make_file(test_file, text)
+    # Get Vocab and senses.
+    vocab = get_context_window(training_sentences, k, stopwords)
+    senses = get_unique_senses(training_sentences)
+    # Get signature vectors.
+    train_sig_vecs = make_sig_vectors(senses, training_sentences, vocab, k)
+    test_sig_vecs = make_norm_sig_vectors(senses, test_sentences, vocab, k)
+    # Calculate cosine scores.
+    scores = get_scores(test_sig_vecs, train_sig_vecs)
+    print(scores)
+    make_file(test_file, len(training_sentences), len(test_sentences), len(senses), len(vocab), scores)
+
 
 if (__name__ == "__main__"):
     main(sys.argv)

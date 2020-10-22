@@ -82,6 +82,14 @@ def test_create_test_sig_vectors():
 
     assert len(test_signature_vectors) == 6
 
+def test_computing_cosine_similarity():
+    x_vec = [3, 4, 0, 1, 5]
+    y_vec = [2, 1, 1, 2, 8]
+
+    res = distsim.Signature_Vector.cosine_sim(x_vec, y_vec)
+
+    assert res == 0.85
+
 def test_compute_cosine_similarity():
     train_file = test_folder + "train.txt"
     test_file = test_folder + "test.txt"
@@ -101,11 +109,21 @@ def test_compute_cosine_similarity():
     for vec in test_signature_vectors.values():
         sentence_scores = list()
         for other_vec in train_signature_vectors.values():
-            sentence_scores.append(vec.cosine_sim(other_vec, other_vec.sense))
+            sentence_scores.append((other_vec.sense, vec.compare(other_vec)))
         test_scores.append(sentence_scores)
 
     res = distsim.sorted_scores(test_scores)
     print(res)
-    assert len(test_signature_vectors) == 6
+    
+def test_add_apostrophes_to_vocab():
+    train_file = "./NaturalLanguageProcessing/Program3/apostrophes.txt"
+    stopwords_file = test_folder + "stopwords.txt"
+    sentences = distsim.read_from_file(train_file, distsim.GoldSentence)
+    stopwords = distsim.read_from_file(stopwords_file)
+    k = 10
+
+    vocab = distsim.get_context_window(sentences, k, stopwords)
+
+    assert len(vocab) == 6
 
 test_compute_cosine_similarity()
