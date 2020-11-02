@@ -18,7 +18,12 @@ class TestStory():
         assert sut.date == ["January", "8,", "1999"]
         assert sut.storyid == "1999-W02-5"
 
-class Test_Paragraph():
+    def test_read_story_paragraphs(self):
+        sut = self.read_test_story_nova_scotia()
+
+        assert len(sut.paragraphs) == 13
+
+class TestParagraph():
     def make_paragraph(self, lines=[]):
         ''' Returns a basic paragraph from a list of sentences. '''
         par = story.Paragraph()

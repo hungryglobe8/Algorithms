@@ -6,6 +6,10 @@ returns an object containing these and text seperated by paragraphs.
 
 Can ask for most likely paragraph to contain text (such as answer to a question).
 '''
+import reader
+stopwords_file = "./NaturalLanguageProcessing/QuestionAnsweringSystem/code/stopwords.txt"
+stopwords = reader.read_from_file(stopwords_file)
+
 class Story():
 	'''
 	Contains all relevant information of a story.
@@ -43,6 +47,9 @@ class Story():
 			else:
 				paragraph.add_words(line)
 
+		# Add last paragraph.
+		paragraphs.append(paragraph)
+		
 		return paragraphs
 
 class Paragraph():
@@ -59,8 +66,25 @@ class Paragraph():
 		"""
 		self.text += line.split()
 
+	def get_context_window(self, word, k):
+		"""
+		Find k words surrounding a specified word.
+		"""
+		if word not in self.text:
+			return None
+
+		else:
+			pass
+
 	def __len__(self):
 		return len(self.text)
+
+class Key_Paragraph(Paragraph):
+	"""
+	A key paragraph only keeps track of unique words not part of stopwords list.
+	"""
+	def __init__(self):
+		Paragraph.__init__(self)
 
 def read_story(file_name):
 	return Story(file_name)
