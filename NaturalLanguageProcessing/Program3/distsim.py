@@ -10,7 +10,7 @@ def parse_args(args):
     ''' Check validity and return args in necessary formats. '''
     validate_len_args(args)
     validate_file_names(args)
-    return args[1], args[2], args[3], args[4]
+    return args[1], args[2], args[3], int(args[4])
 
 def validate_len_args(args):
     ''' 
@@ -228,11 +228,11 @@ def sorted_scores(lst):
 def make_file(old_file_name, num_train, num_test, num_senses, voc_size, res):
     new_file_name = old_file_name + ".distsim.my"
     with open(new_file_name, 'w') as f:
-        f.writeline(f"Number of Training Sentences = {num_train}")
-        f.writeline(f"Number of Test Sentences = {num_test}")
-        f.writeline(f"Number of Gold Senses = {num_senses}")
-        f.writeline(f"Vocabulary Size = {voc_size}")
-        f.writeline(f"{res}")
+        f.write(f"Number of Training Sentences = {num_train}\n")
+        f.write(f"Number of Test Sentences = {num_test}\n")
+        f.write(f"Number of Gold Senses = {num_senses}\n")
+        f.write(f"Vocabulary Size = {voc_size}\n")
+        f.write(f"{res}")
 
 def main(args):
     training_file, test_file, stopwords_file, k = parse_args(args)
@@ -248,9 +248,7 @@ def main(args):
     test_sig_vecs = make_norm_sig_vectors(senses, test_sentences, vocab, k)
     # Calculate cosine scores.
     scores = get_scores(test_sig_vecs, train_sig_vecs)
-    print(scores)
     make_file(test_file, len(training_sentences), len(test_sentences), len(senses), len(vocab), scores)
-
 
 if (__name__ == "__main__"):
     main(sys.argv)
