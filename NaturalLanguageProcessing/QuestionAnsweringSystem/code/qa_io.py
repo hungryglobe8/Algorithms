@@ -15,7 +15,7 @@ class Question():
 	secondary_questions = ["if"]
 	def __init__(self, question_id, question, difficulty):
 		self.question_id = question_id
-		self.question = question.split()
+		self.question = question
 		self.difficulty = difficulty
 		# Figure out type of question.
 		for word in self.question:
@@ -42,4 +42,4 @@ class Answer():
 
 	def __str__(self):
 		''' Leaves self.answer if the value is None. '''			
-		return f"QuestionID: {self.answer_id}\nAnswer: {self.answer}"
+		return f"QuestionID: {self.answer_id}\nAnswer: {self.answer}\n"

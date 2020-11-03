@@ -3,7 +3,7 @@ from qa_io import *
 test_folder = "./NaturalLanguageProcessing/QuestionAnsweringSystem/tests/"
 
 class TestQuestions():
-	def make_basic_question(self, q_id="1", question="Who am I?", difficulty="Easy"):
+	def make_basic_question(self, q_id="1", question=["Who", "am", "I?"], difficulty="Easy"):
 		return Question(q_id, question, difficulty)
 
 	def test_make_basic_question_not_null(self):
@@ -44,4 +44,4 @@ class TestAnswers():
 	def test_basic_answer_to_string(self):
 		sut = self.make_basic_answer()
 
-		assert str(sut) == "QuestionID: 1\nAnswer: Jeremy"
+		assert str(sut) == "QuestionID: 1\nAnswer: Jeremy\n"

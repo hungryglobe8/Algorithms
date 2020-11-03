@@ -24,9 +24,11 @@ def read_questions(file_name):
 	''' 
 	Read questions from a file. Questions are formed of three lines (id, question, and difficulty)
 	and separated by newline chars.
+
+	Appends .questions to the name.
 	'''
 	questions = []
-	with open(file_name) as f: 
+	with open(file_name + ".questions") as f: 
 		line = f.readline()
 		# Read until there are no more groups.
 		while(line):
@@ -41,3 +43,11 @@ def read_questions(file_name):
 			line = f.readline()
 		
 	return questions
+
+def write_response_file(old_file_name, answers):
+	''' Writes a response file given a list of answers and a file name. '''
+	new_file_name = old_file_name + ".response"
+	with open(new_file_name, 'w') as f:
+		for answer in answers:
+			# Leave a line between each answer.
+			f.write(f"{str(answer)}\n")
