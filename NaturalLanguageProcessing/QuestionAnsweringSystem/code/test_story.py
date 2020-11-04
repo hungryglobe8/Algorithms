@@ -1,10 +1,10 @@
 import pytest
 import story
-test_folder = "./NaturalLanguageProcessing/QuestionAnsweringSystem/tests/smalldevset/"
+test_folder = "/NaturalLanguageProcessing/QuestionAnsweringSystem/tests/smalldevset/"
 
 class TestStory():
     def read_test_story_nova_scotia(self):
-        test_file = test_folder + "1999-W02-5"
+        test_file = "." + test_folder + "1999-W02-5"
 
         return story.read_story(test_file)
 
