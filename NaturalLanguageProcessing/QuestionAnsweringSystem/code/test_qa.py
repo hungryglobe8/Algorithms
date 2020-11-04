@@ -1,6 +1,6 @@
 import pytest, qa, os
 test_folder = "./NaturalLanguageProcessing/QuestionAnsweringSystem/tests/"
-Singleinput_file = test_folder + "single.input"
+input_file = test_folder + "single.input"
 
 def single_input_args():
 	input_file = test_folder + "single.input"
