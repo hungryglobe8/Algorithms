@@ -13,15 +13,17 @@ stopwords = reader.read_from_file(stopwords_file)
 class Story():
 	'''
 	Contains all relevant information of a story.
+
+	Leave off .story part of file_name.
 	'''
 	def __init__(self, file_name):
 		''' 
-		Read story information from a file.
+		Read story information from a file (leave off .story).
 			Headline, Date - List of strings
 			StoryID - String
 			Text - List of Paragraphs
 		'''
-		with open(file_name) as f:
+		with open(file_name + ".story") as f:
 			self.headline = f.readline().split()[1:]
 			self.date = f.readline().split()[1:]
 			self.storyid = f.readline().split()[1]

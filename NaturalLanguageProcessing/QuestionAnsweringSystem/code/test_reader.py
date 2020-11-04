@@ -8,6 +8,13 @@ def test_read_questions():
 
 	assert len(questions) == 6
 
+def test_read_input_file():
+	input_file = test_folder + "single.input"
+
+	lines = reader.read_from_file(input_file)
+
+	assert len(lines) == 3
+
 def test_write_response():
 	response_file = test_folder + "basic_answers"
 	answers = [qa_io.Answer(1, "500"), qa_io.Answer(2, "750"), qa_io.Answer(3, "1000")]
