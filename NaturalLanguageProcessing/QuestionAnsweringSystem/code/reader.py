@@ -37,7 +37,7 @@ def read_questions(file_name):
 			question = f.readline().split()[1:]
 			difficulty = f.readline().split()[1]
 			# Add question to list.
-			questions.append(qa_io.Question(q_id, question, difficulty))
+			questions.append(qa_io.make_question(q_id, question, difficulty))
 			# Move to next
 			f.readline()
 			line = f.readline()

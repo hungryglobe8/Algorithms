@@ -25,7 +25,7 @@ def formulate_response(root):
 	text = story.Story(root)
 	questions = reader.read_questions(root)
 	# Answer all questions. TODO pass in text to answer_question
-	answers = [question.answer_question() for question in questions]
+	answers = [question.answer_question(text) for question in questions]
 	# Write answers.
 	reader.write_response_file(root, answers)
 
@@ -39,7 +39,6 @@ def main(args):
 		# Root is used to access .story and .questions
 		root = directory + storyID
 		formulate_response(root)
-
 
 if (__name__ == "__main__"):
 	main(sys.argv)

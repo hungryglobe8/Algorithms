@@ -6,7 +6,7 @@ returns an object containing these and text seperated by paragraphs.
 
 Can ask for most likely paragraph to contain text (such as answer to a question).
 '''
-import reader
+import reader, string, spacy
 stopwords_file = "./NaturalLanguageProcessing/QuestionAnsweringSystem/code/stopwords.txt"
 stopwords = reader.read_from_file(stopwords_file)
 
@@ -31,7 +31,8 @@ class Story():
 			for _ in range(3):
 				f.readline()
 			# Get paragraphs.
-			self.paragraphs = self.split_into_paragraphs(f.readlines())
+			self.text = f.readlines()
+			self.paragraphs = self.split_into_paragraphs(self.text)
 
 	def split_into_paragraphs(self, text):
 		''' 
@@ -53,6 +54,28 @@ class Story():
 		paragraphs.append(paragraph)
 		
 		return paragraphs
+
+	def get_possible_paragraphs(self, words, exclude=[]):
+		poss = {paragraph: 0 for paragraph in self.paragraphs}
+		for paragraph in self.paragraphs:
+			for word in words:
+				# Lowercase, strip punctuation.
+				# TODO: Get root of word library hookup?
+				word = word.lower().translate(str.maketrans('', '', string.punctuation))
+				if word in paragraph.text and word not in exclude:
+					# Increase count of paragraph appearing.
+					poss[paragraph] += 1
+
+		# Sort possibilities by dictionary values.
+		return sorted(poss.items(), key=lambda x: x[1], reverse=True)
+
+	def get_named_entities(self):
+		# Here for now to increase speed of testing. Eventual move to qa file (above individual stories loading)
+		sp = spacy.load('en_core_web_sm')
+		sen = sp(''.join(self.text))
+
+		# Consider sen.noun_chunks
+		return sen.ents
 
 class Paragraph():
 	"""

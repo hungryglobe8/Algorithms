@@ -1,10 +1,10 @@
 import pytest
-from qa_io import *
-test_folder = "./NaturalLanguageProcessing/QuestionAnsweringSystem/tests/"
+import reader, story, qa_io
+test_folder = "./NaturalLanguageProcessing/QuestionAnsweringSystem/tests/smalldevset/"
 
 class TestQuestions():
 	def make_basic_question(self, q_id="1", question=["Who", "am", "I?"], difficulty="Easy"):
-		return Question(q_id, question, difficulty)
+		return qa_io.make_question(q_id, question, difficulty)
 
 	def test_make_basic_question_not_null(self):
 		assert self.make_basic_question() is not None
@@ -17,16 +17,17 @@ class TestQuestions():
 		assert sut.difficulty == "Easy"
 
 	def test_basic_question_correct_type(self):
-		sut = self.make_basic_question()
+		question = "Where did you go?".split()
+		sut = self.make_basic_question(question=question)
 
-		assert sut.type == "who"
+		assert isinstance(sut, qa_io.WhereQuestion)
 
 	def test_answer_basic_question(self):
 		sut = self.make_basic_question()
 
 		res = sut.answer_question()
 
-		assert isinstance(res, Answer)
+		assert isinstance(res, qa_io.Answer)
 
 class TestAnswers():
 	def make_basic_answer(self, a_id="1", answer="Jeremy"):
@@ -45,3 +46,18 @@ class TestAnswers():
 		sut = self.make_basic_answer()
 
 		assert str(sut) == "QuestionID: 1\nAnswer: Jeremy\n"
+
+class TestRealQuestions():
+	# Save roots for use in specific tests.
+	ns_root = test_folder + "1999-W02-5"
+
+	def read_story(self, file_root):
+		questions = reader.read_questions(file_root)
+		text = story.read_story(file_root)
+		return questions, text
+
+	def test_where_location(self):
+		questions, story = self.read_story(self.ns_root)
+		res = questions[0].answer_question(story)
+
+		assert res.answer == "Liverpool"

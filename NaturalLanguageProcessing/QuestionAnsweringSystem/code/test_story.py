@@ -23,6 +23,29 @@ class TestStory():
 
         assert len(sut.paragraphs) == 13
 
+    def test_get_poss_paragraphs(self):
+        sut = self.read_test_story_nova_scotia()
+        words = "Where is South Queens Junior High School located?".split()
+
+        res = sut.get_possible_paragraphs(words)
+
+        assert sum(res.values()) == 10
+
+    def test_get_poss_paragraphs_no_stopwords(self):
+        sut = self.read_test_story_nova_scotia()
+        words = "Where is South Queens Junior High School located?".split()
+
+        res = sut.get_possible_paragraphs(words, story.stopwords)
+
+        assert sum(res.values()) == 7
+
+    def test_use_spacy_get_ents(self):
+        sut = self.read_test_story_nova_scotia()
+
+        res = sut.get_named_entities()
+
+        assert res is not None
+
 class TestParagraph():
     def make_paragraph(self, lines=[]):
         ''' Returns a basic paragraph from a list of sentences. '''
