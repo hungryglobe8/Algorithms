@@ -30,6 +30,7 @@ class Story():
 			# Skip three lines.
 			for _ in range(3):
 				f.readline()
+			
 			# Get paragraphs.
 			self.text = f.readlines()
 			self.paragraphs = self.split_into_paragraphs(self.text)
