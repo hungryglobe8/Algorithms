@@ -3,6 +3,9 @@ This file maintains various types of classes in use by a QA system:
 	Questions
 	Answers
 """
+import spacy
+sp = spacy.load('en_core_web_sm')
+
 class Question():
 	"""
 	QuestionID - string
@@ -18,20 +21,43 @@ class Question():
 		self.question = question
 		self.difficulty = difficulty
 
-	def answer_question(self, answer=None):
+	def answer_question(self, story, acceptable_types, question, include=[], exclude=[]):
 		""" Should be implemented in subclasses. """
-		if answer is None:
-			return Answer(self.question_id, "NotImplemented - " + " ".join(self.question))
-		else:
-			return Answer(self.question_id, answer)
+		# Get most likely sentences (sorted by value).
+		most_likely_sentences = story.get_most_likely_sentences(question, include=include)
+		# Get named entities.
+		ents = story.doc.ents
+
+		answer = "NotImplemented - " + " ".join(question)
+		# Start with most likely paragraph, look for a match.
+		for sentence, likelihood in most_likely_sentences:
+			# Get entities of each sentence.
+			sent_ents = sp(' '.join(sentence.text)).ents
+			# Add possible answers to list.
+			for ent in sent_ents:
+				if ent.label_ in acceptable_types:
+					# poss.append(ent.text)
+					return Answer(self.question_id, ent.text)
+
+		return Answer(self.question_id, answer)
+
+class WhoQuestion(Question):
+	"""
+
+	"""
+	acceptable_types = ["PERSON"]
+	def __init__(self, question_id, question, difficulty):
+		Question.__init__(self, question_id, question, difficulty)
+
+	def answer_question(self, story):
+		"""
+		Not extremely accurate (2nd most likely)
+		Get rid of pronouns?
+		"""
+		return super().answer_question(story, WhoQuestion.acceptable_types, self.question)
+
 
 class WhereQuestion(Question):
-	"""
-	QuestionID - string
-	Question - list of strings (original format)
-	Difficulty - string
-	Type - first question word encountered in sentence (None if not discovered)
-	"""
 	extra_words = ["in"]
 	acceptable_types = ["GPE", "PERSON"]
 
@@ -39,32 +65,7 @@ class WhereQuestion(Question):
 		Question.__init__(self, question_id, question, difficulty)
 
 	def answer_question(self, story):
-		# Get most likely paragraphs (sort by value). TODO consider sentences?
-		most_likely_paragraphs = story.get_possible_paragraphs(self.question + self.extra_words)
-		# Get named entities.
-		ents = story.get_named_entities()
-
-		answer = "no answer found"
-		# Start with most likely paragraph, look for a match.
-		for paragraph, likelihood in most_likely_paragraphs:
-			poss = []
-			for ent in list(ents):
-				if ent.string in ' '.join(paragraph.text):
-					poss.append(ent)
-
-			# No match.
-			if len(poss) == 0:
-				continue
-			# One match.
-			elif len(poss) == 1:
-				answer = poss[0]
-				break
-			# Multiple matches.
-			else:
-				answer = self.break_ties(poss)
-				break
-
-		return Question.answer_question(self, answer)
+		return super().answer_question(story, WhereQuestion.acceptable_types, WhereQuestion.extra_words, include=WhereQuestion.extra_words)
 
 	def break_ties(self, poss):
 		''' Loop through acceptable types and return best possibility. '''
@@ -92,7 +93,8 @@ class Answer():
 def make_question(question_id, question, difficulty):
 	params = question_id, question, difficulty
 	switcher = {
-		"where": WhereQuestion(*params)
+		"where": WhereQuestion(*params),
+		"who": WhoQuestion(*params)
 	}
 	# Figure out type of question.
 	for word in question:

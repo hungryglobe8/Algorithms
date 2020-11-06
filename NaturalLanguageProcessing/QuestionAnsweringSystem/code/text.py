@@ -50,10 +50,10 @@ class Story():
 		# Vocab set is lowercase, stripped of punctuation, unique (possible stems?)
 		self.vocab = get_vocab(self.doc.text.split())
 
-	def get_most_likely_sentence(self, question):
-		sentence_vecs = [SignatureVector(sentence.text.split(), self.vocab) for sentence in self.sentences]
+	def get_most_likely_sentences(self, question, include=[], exclude=stopwords):
+		sentence_vecs = [SignatureVector(sentence.text.split(), self.vocab, include, exclude) for sentence in self.sentences]
 		#TODO QUESTION.words
-		question_vec = SignatureVector(question, self.vocab)
+		question_vec = SignatureVector(question, self.vocab, include, exclude)
 
 		scores = dict()
 		for sentence_vec in sentence_vecs:
@@ -66,26 +66,12 @@ class Story():
 	def debug(self, res):
 		for sig_vec, score in res: print(f"{sig_vec.text}: {score}")
 
-	def get_possible_paragraphs(self, words, exclude=[]):
-		poss = {paragraph: 0 for paragraph in self.paragraphs}
-		for paragraph in self.paragraphs:
-			for word in words:
-				# Lowercase, strip punctuation.
-				# TODO: Get root of word library hookup?
-				word = word.lower().translate(str.maketrans('', '', string.punctuation))
-				if word in paragraph.text and word not in exclude:
-					# Increase count of paragraph appearing.
-					poss[paragraph] += 1
-
-		# Sort possibilities by dictionary values.
-		return sorted(poss.items(), key=lambda x: x[1], reverse=True)
-
 class SignatureVector():
 	''' Signature vector for a sense. 
 	Excludes stopwords by default. '''
-	def __init__(self, text, vocab):
+	def __init__(self, text, vocab, include=[], exclude=[]):
 		self.text = text
-		text_set = get_vocab(text, exclude=stopwords)
+		text_set = get_vocab(text, include=include, exclude=exclude)
 		self.vector = {word: 0 for word in vocab}
 		for word in text_set:
 			if word in vocab:

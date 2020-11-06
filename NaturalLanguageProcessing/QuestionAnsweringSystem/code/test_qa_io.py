@@ -61,3 +61,15 @@ class TestRealQuestions():
 		res = questions[0].answer_question(story)
 
 		assert res.answer == "Liverpool"
+
+	def test_who_principal(self):
+		questions, story = self.read_story(self.ns_root)
+		res = questions[1].answer_question(story)
+
+		assert res.answer == "Betty Jean Aucoin"
+
+	def test_what_metal(self):
+		questions, story = self.read_story(self.ns_root)
+		res = questions[2].answer_question(story)
+
+		assert res.answer == "turned it into a fitness club"		

@@ -44,41 +44,9 @@ class TestStory():
 
         assert res[0][1] == 0.75
 
-    def test_get_poss_paragraphs_no_stopwords(self):
-        sut = self.read_test_story_nova_scotia()
-        words = "Where is South Queens Junior High School located?".split()
-
-        res = sut.get_possible_paragraphs(words, text.stopwords)
-
-        assert sum(res.values()) == 7
-
     def test_use_spacy_get_ents(self):
         sut = self.read_test_story_nova_scotia()
 
-        res = sut.doc
+        res = sut.doc.ents
 
-        assert isinstance(res, None)
-
-class TestParagraph():
-    def make_paragraph(self, lines=[]):
-        ''' Returns a basic paragraph from a list of sentences. '''
-        par = text.Paragraph()
-        for line in lines:
-            par.add_words(line)
-        return par
-
-    def test_make_paragraph_is_not_null(self):
-        assert self.make_paragraph() is not None
-
-    def test_make_one_paragraph(self):
-        text = ["I went\n", "to the store\n", "to fetch water\n", "\n", "\n"]
-
-        res = self.make_paragraph(text)
-
-        assert len(res) == 8
-
-class TestSentence():
-    def make_sentence(self):
-        sentence = text.Sentence("I went to the store.")
-
-        assert True
+        assert isinstance(res, tuple)
