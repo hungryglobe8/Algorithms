@@ -4,7 +4,7 @@ First line of input file is directory path.
 Remaining lines are stories and questions to solve.
 Produce an answer file for each.
 '''
-import sys, os, re, math, story
+import sys, os, re, math, text
 import validate, reader
 
 def parse_file(file_name):
@@ -22,10 +22,10 @@ def formulate_response(root):
 	Read questions at root.questions (happens in reader).
 	Answers questions based on story text and type of question.
 	'''
-	text = story.Story(root)
+	story = text.Story(root)
 	questions = reader.read_questions(root)
 	# Answer all questions. TODO pass in text to answer_question
-	answers = [question.answer_question(text) for question in questions]
+	answers = [question.answer_question(story) for question in questions]
 	# Write answers.
 	reader.write_response_file(root, answers)
 

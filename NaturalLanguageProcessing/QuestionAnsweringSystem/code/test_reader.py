@@ -1,5 +1,5 @@
 import pytest, reader, qa_io, os
-test_folder = "./NaturalLanguageProcessing/QuestionAnsweringSystem/tests/"
+test_folder = "./tests/smalldevset/"
 
 def test_read_questions():
 	question_file = test_folder + "developset-v2/1999-W02-5"

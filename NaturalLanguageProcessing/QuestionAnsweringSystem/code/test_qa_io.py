@@ -1,6 +1,6 @@
 import pytest
-import reader, story, qa_io
-test_folder = "./NaturalLanguageProcessing/QuestionAnsweringSystem/tests/smalldevset/"
+import reader, text, qa_io
+test_folder = "./tests/smalldevset/"
 
 class TestQuestions():
 	def make_basic_question(self, q_id="1", question=["Who", "am", "I?"], difficulty="Easy"):
@@ -31,7 +31,7 @@ class TestQuestions():
 
 class TestAnswers():
 	def make_basic_answer(self, a_id="1", answer="Jeremy"):
-		return Answer(a_id, answer)
+		return qa_io.Answer(a_id, answer)
 
 	def test_make_basic_answer_not_null(self):
 		assert self.make_basic_answer() is not None
@@ -53,8 +53,8 @@ class TestRealQuestions():
 
 	def read_story(self, file_root):
 		questions = reader.read_questions(file_root)
-		text = story.read_story(file_root)
-		return questions, text
+		story = text.read_story(file_root)
+		return questions, story
 
 	def test_where_location(self):
 		questions, story = self.read_story(self.ns_root)

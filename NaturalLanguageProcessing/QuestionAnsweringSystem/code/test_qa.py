@@ -1,5 +1,5 @@
 import pytest, qa, os
-test_folder = "./NaturalLanguageProcessing/QuestionAnsweringSystem/tests/"
+test_folder = "./tests/"
 input_file = test_folder + "single.input"
 
 def single_input_args():
