@@ -47,7 +47,7 @@ class TestAnswers():
 
 		assert str(sut) == "QuestionID: 1\nAnswer: Jeremy\n"
 
-class TestRealQuestions():
+class TestNovaScotia():
 	# Save roots for use in specific tests.
 	ns_root = test_folder + "1999-W02-5"
 
@@ -72,4 +72,76 @@ class TestRealQuestions():
 		questions, story = self.read_story(self.ns_root)
 		res = questions[2].answer_question(story)
 
-		assert res.answer == "turned it into a fitness club"		
+		assert ' '.join(res.answer) == "The school has turned its one-time metal shop - lost to budget cuts almost two years ago - into a money-making professional fitness club."
+
+	def test_who_runs_club(self):
+		# Still wrong
+		questions, story = self.read_story(self.ns_root)
+		res = questions[3].answer_question(story)
+
+		#"school and community volunteers (make connection between run and operate"
+		assert res.answer == "Betty Jean Aucoin"
+
+	def test_how_big_is_the_club(self):
+		questions, story = self.read_story(self.ns_root)
+		res = questions[4].answer_question(story)
+
+		# REAL "12,000 square feet"
+		assert res.answer == "12,000 square foot"
+
+	def test_how_much_student_cost(self):
+		questions, story = self.read_story(self.ns_root)
+		res = questions[5].answer_question(story)
+
+		# REAL "$135"
+		assert res.answer == "$180"
+
+class TestBabeRooth():
+	# Save roots for use in specific tests.
+	br_root = test_folder + "1999-W03-5"
+
+	def read_story(self, file_root):
+		questions = reader.read_questions(file_root)
+		story = text.read_story(file_root)
+		return questions, story
+
+	def test_what_team(self):
+		questions, story = self.read_story(self.br_root)
+		res = questions[0].answer_question(story)
+
+		# strip the
+		assert res.answer == "the Edmonton Grads"
+
+	def test_who_principal(self):
+		questions, story = self.read_story(self.br_root)
+		res = questions[1].answer_question(story)
+
+		assert res.answer == "Betty Jean Aucoin"
+
+	def test_what_metal(self):
+		questions, story = self.read_story(self.br_root)
+		res = questions[2].answer_question(story)
+
+		assert ' '.join(res.answer) == "The school has turned its one-time metal shop - lost to budget cuts almost two years ago - into a money-making professional fitness club."
+
+	def test_who_runs_club(self):
+		# Still wrong
+		questions, story = self.read_story(self.br_root)
+		res = questions[3].answer_question(story)
+
+		#"school and community volunteers (make connection between run and operate"
+		assert res.answer == "Betty Jean Aucoin"
+
+	def test_how_big_is_the_club(self):
+		questions, story = self.read_story(self.br_root)
+		res = questions[4].answer_question(story)
+
+		# REAL "12,000 square feet"
+		assert res.answer == "12,000 square foot"
+
+	def test_how_much_student_cost(self):
+		questions, story = self.read_story(self.br_root)
+		res = questions[5].answer_question(story)
+
+		# REAL "$135"
+		assert res.answer == "$180"

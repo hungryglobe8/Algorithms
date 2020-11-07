@@ -50,10 +50,11 @@ class Story():
 		# Vocab set is lowercase, stripped of punctuation, unique (possible stems?)
 		self.vocab = get_vocab(self.doc.text.split())
 
-	def get_most_likely_sentences(self, question, include=[], exclude=stopwords):
-		sentence_vecs = [SignatureVector(sentence.text.split(), self.vocab, include, exclude) for sentence in self.sentences]
+	def get_most_likely_sentences(self, question, include=[], exclude=[]):
+		# exclude stopwords and user-defined words.
+		sentence_vecs = [SignatureVector(sentence.text.split(), self.vocab, include, stopwords + exclude) for sentence in self.sentences]
 		#TODO QUESTION.words
-		question_vec = SignatureVector(question, self.vocab, include, exclude)
+		question_vec = SignatureVector(question, self.vocab, include, stopwords + exclude)
 
 		scores = dict()
 		for sentence_vec in sentence_vecs:
@@ -64,7 +65,7 @@ class Story():
 		return res
 
 	def debug(self, res):
-		for sig_vec, score in res: print(f"{sig_vec.text}: {score}")
+		for sig_vec, score in res[:6]: print(f"{sig_vec.text}: {score}")
 
 class SignatureVector():
 	''' Signature vector for a sense. 
@@ -120,8 +121,6 @@ def get_vocab(text, include=[], exclude=[]):
 			# Add a word if it is in include (highest priority) or if it is not in exclude.
 			if word in include or word not in exclude:
 				unique.append(word)
-			else:
-				print(word)
 	return unique
 
 def read_story(file_name):
