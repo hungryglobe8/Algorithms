@@ -27,7 +27,16 @@ def formulate_response(root):
 	story = text.Story(root)
 	questions = reader.read_questions(root)
 	# Answer all questions. TODO pass in text to answer_question
-	answers = [question.answer_question(story) for question in questions]
+	answers = []
+	for question in questions:
+		answer = None
+		try:
+			answer = question.answer_question(story)
+		except:
+			# No answer
+			answer = question.blank_answer()
+		answers.append(answer)
+
 	# Write answers.
 	reader.write_response_file(root, answers)
 

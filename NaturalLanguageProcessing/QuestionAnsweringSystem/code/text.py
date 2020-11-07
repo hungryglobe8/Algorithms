@@ -12,11 +12,12 @@ Paragraphs -
 Sentences -
 	Make a vector based on story vocab (include or exclude extra terms).
 '''
-import reader, string, spacy
+import reader, string
 stopwords_file = "./code/stopwords.txt"
 stopwords = reader.read_from_file(stopwords_file)
 # Here for now to increase speed of testing. Eventual move to qa file (above individual stories loading)
-sp = spacy.load('en_core_web_sm')
+import qa
+sp = qa.sp
 
 class Story():
 	'''

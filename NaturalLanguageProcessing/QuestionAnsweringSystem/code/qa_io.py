@@ -3,8 +3,8 @@ This file maintains various types of classes in use by a QA system:
 	Questions
 	Answers
 """
-import spacy
-sp = spacy.load('en_core_web_sm')
+import qa
+sp = qa.sp
 
 class Question():
 	"""
@@ -48,6 +48,9 @@ class Question():
 			if word[0].isupper():
 				res.append(word.lower())
 		return res
+
+	def blank_answer(self):
+		return Answer(self.question_id, "")
 
 class HowQuestion(Question):
 	"""
@@ -195,6 +198,6 @@ def make_question(question_id, question, difficulty):
 			try:
 				return switcher[word]
 			except:
-				pass
+				continue
 	return Question(*params)
 	#raise NotImplementedError(f"Question word not in {question}")
