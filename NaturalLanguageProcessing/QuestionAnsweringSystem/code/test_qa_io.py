@@ -21,13 +21,7 @@ class TestQuestions():
 		sut = self.make_basic_question(question=question)
 
 		assert isinstance(sut, qa_io.WhereQuestion)
-
-	def test_answer_basic_question(self):
-		sut = self.make_basic_question()
-
-		res = sut.answer_question()
-
-		assert isinstance(res, qa_io.Answer)
+		
 
 class TestAnswers():
 	def make_basic_answer(self, a_id="1", answer="Jeremy"):

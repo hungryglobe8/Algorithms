@@ -6,6 +6,8 @@ Produce an answer file for each.
 '''
 import sys, os, re, math, text
 import validate, reader
+import spacy
+sp = spacy.load('en_core_web_sm')
 
 def parse_file(file_name):
 	''' 

@@ -61,7 +61,7 @@ class Story():
 			scores[sentence_vec] = sentence_vec.compare(question_vec)
 
 		res = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-		self.debug(res)
+		#self.debug(res)
 		return res
 
 	def debug(self, res):

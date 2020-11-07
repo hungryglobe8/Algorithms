@@ -1,0 +1,100 @@
+QuestionID: 2000-W03-4-1
+Question: Who is Canada's Minister of Health?
+Answer: Allan Rock
+Difficulty: Moderate
+
+QuestionID: 2000-W03-4-2
+Question: Where does the government want to put pictures of diseased lungs?
+Answer: on cigarette packages | half of each side of a cigarette package
+Difficulty: Easy
+
+QuestionID: 2000-W03-4-4
+Question: When does Allen Rock want the new cigarette packages in Canadian stores?
+Answer: by the end of the year | by the end of 2000
+Difficulty: Easy
+
+QuestionID: 2000-W03-4-5
+Question: Who is Rob Parker a spokesman for?
+Answer: The Canadian Tobacco Manufacturers Association
+Difficulty: Moderate
+
+QuestionID: 2000-W03-4-6
+Question: How much would it cost to change the cigarette packaging, according to The Canadian Tobacco Manufacturers Association?
+Answer: millions of dollars
+Difficulty: Easy
+
+QuestionID: 2000-W03-4-7
+Question: What do anti-smoking organizations think about the cigarette packaging plan?
+Answer: They have applauded the strategy | The Non-Smokers Rights Association says the labels will give people a graphic reminder of the harmful effects of smoking a cigarette.
+Difficulty: Easy
+
+QuestionID: 2000-W03-5-1
+Question: What do Jerry's glasses have on them?
+Answer: a tiny camera and an ultrasonic rangefinder
+Difficulty: Easy
+
+QuestionID: 2000-W03-5-2
+Question: When did Jerry get electrodes implanted in his brain?
+Answer: 1979
+Difficulty: Moderate
+
+QuestionID: 2000-W03-5-3
+Question: How old is Jerry?
+Answer: 62
+Difficulty: Easy
+
+QuestionID: 2000-W03-5-4
+Question: Who helped Jerry see?
+Answer: John Girvin | a Canadian brain surgeon | a neurosurgery (brain surgery) professor | a neurosurgery (brain surgery) professor in London, Ontario | a doctor | a computer
+Difficulty: Moderate
+
+QuestionID: 2000-W03-5-5
+Question: Where does John Girvin work as a professor?
+Answer: London, Ontario | London | Ontario
+Difficulty: Easy
+
+QuestionID: 2000-W06-4-1
+Question: Why could students at Sisler High School be sent home or suspended for kissing?
+Answer: if a friendly peck gets too passionate
+Difficulty: easy
+
+QuestionID: 2000-W06-4-2
+Question: How are students at Sisler expected to treat each other, according to vice-principal Mike Kachmar?
+Answer: with courtesy and respect
+Difficulty: easy
+
+QuestionID: 2000-W06-4-3
+Question: How did Kachmar describe school?
+Answer: as "a place of business"
+Difficulty: easy
+
+QuestionID: 2000-W06-4-4
+Question: Why did Kachmar say he announced the ban on kissing?
+Answer: he received complaints about a few students whose intense kissing was making others uncomfortable
+Difficulty: moderate
+
+QuestionID: 2000-W06-4-5
+Question: How far back in Western civilization are there references to kissing?
+Answer: back to the Old Testament
+Difficulty: moderate
+
+QuestionID: 2000-W06-4-6
+Question: Who said he has never witnessed a problem in Sisler's hallways?
+Answer: Jeffrey Besyk
+Difficulty: easy
+
+QuestionID: 2000-W06-4-7
+Question: Where was kissing rarely practiced until the 20th century?
+Answer: East Asia
+Difficulty: easy
+
+QuestionID: 2000-W06-4-8
+Question: When were medieval knights kissed?
+Answer: after being knighted
+Difficulty: easy
+
+QuestionID: 2000-W06-4-9
+Question: What is the "holy kiss" still a part of?
+Answer: Roman Catholic rituals
+Difficulty: moderate
+
