@@ -37,6 +37,7 @@ class Question():
 			for ent in sent_ents:
 				if ent.label_ in acceptable_types and not any(word in ent.text.split() for word in question):
 					# poss.append(ent.text)
+					print(ent.text, ent.label_)
 					return Answer(self.question_id, ent.text)
 
 		return Answer(self.question_id, answer)
@@ -46,7 +47,7 @@ class HowQuestion(Question):
 
 	"""
 	acceptable_types = ["PERSON"]
-	quantifiers = {"big":["QUANTITY"], "much":["MONEY", "QUANTITY", "COUNT"]}
+	quantifiers = {"big":["QUANTITY"], "much":["MONEY", "QUANTITY", "COUNT"], "tall":["QUANTITY"], "many":["CARDINAL", "QUANTITY", "COUNT"]}
 	def __init__(self, question_id, question, difficulty):
 		Question.__init__(self, question_id, question, difficulty)
 
@@ -57,14 +58,18 @@ class HowQuestion(Question):
 			if word.lower() == "how":
 				how_type = self.question[i+1]
 				break
+
+		if how_type not in self.quantifiers.keys():
+			most_likely_sentences = story.get_most_likely_sentences(self.question)
+			return Answer(self.question_id, most_likely_sentences[0][0].text)
+
 		# Currently replacing '-' with ' ' in Answer class itself.
 		answer = super().answer_question(story, HowQuestion.quantifiers[how_type], self.question)
 		if how_type == "big":
 			answer.replace('-', ' ')
-			return answer
-		elif how_type == "much":
+		elif how_type == "much" and answer.answer.isdigit():
 			answer.prepend('$')
-			return answer
+		return answer
 
 class WhatQuestion(Question):
 	"""	No such thing as acceptable types for this one.	"""
@@ -100,6 +105,13 @@ class WhatQuestion(Question):
 				res.append(word.lower())
 		return res
 
+class WhenQuestion(Question):
+	acceptable_types = ["DATE"]
+	def __init__(self, question_id, question, difficulty):
+		Question.__init__(self, question_id, question, difficulty)
+
+	def answer_question(self, story):
+		return super().answer_question(story, WhenQuestion.acceptable_types, self.question)
 
 class WhoQuestion(Question):
 	"""
@@ -161,7 +173,8 @@ def make_question(question_id, question, difficulty):
 		"where": WhereQuestion(*params),
 		"who": WhoQuestion(*params),
 		"what": WhatQuestion(*params),
-		"how": HowQuestion(*params)
+		"how": HowQuestion(*params),
+		"when": WhenQuestion(*params)
 	}
 	# Figure out type of question.
 	for word in question:
@@ -171,6 +184,5 @@ def make_question(question_id, question, difficulty):
 				return switcher[word]
 			except:
 				pass
-	print (question)
 	return Question(*params)
 	#raise NotImplementedError(f"Question word not in {question}")
