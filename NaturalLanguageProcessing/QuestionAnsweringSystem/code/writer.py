@@ -107,4 +107,11 @@ def score_subset(input_file, question_type):
 	What works for what types of questions?
 	Create '-score.txt' file.
 	"""
-	qa.main([None, input_file, question_type])
+
+	qa.main([None, input_file], question_type)
+
+	# Use a list of args instead of a string
+	input_files = ['file1', 'file2', 'file3']
+	my_cmd = ['cat'] + input_files
+	with open('myfile', "w") as outfile:
+    	subprocess.run(my_cmd, stdout=outfile)

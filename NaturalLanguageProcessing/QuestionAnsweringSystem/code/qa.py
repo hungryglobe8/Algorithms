@@ -18,7 +18,7 @@ def parse_file(file_name):
 	lines = reader.read_from_file(file_name)
 	return "." + lines[0], lines[1:]
 
-def formulate_response(root):
+def formulate_response(root, question_type=None):
 	'''
 	Read story at root.story (happens in reader).
 	Read questions at root.questions (happens in reader).
@@ -30,17 +30,21 @@ def formulate_response(root):
 	answers = []
 	for question in questions:
 		answer = None
-		try:
-			answer = question.answer_question(story)
-		except:
-			# No answer
-			answer = question.blank_answer()
-		answers.append(answer)
+		if (question_type is None or any(word.lower() == question_type for word in question.question)):
+			try:
+				answer = question.answer_question(story)
+			except:
+				# No answer
+				answer = question.blank_answer()
+			answers.append(answer)
 
 	# Write answers.
-	writer.response_file(root, answers)
+	if question_type is not None:
+		writer.response_file(root + f"-{question_type}", answers)
+	else:
+		writer.response_file(root, answers)
 
-def main(args):
+def main(args, question_type=None):
 	# Check input file exists.
 	validate.validate_file_names(args)
 	# Get lines of input file.
@@ -49,7 +53,7 @@ def main(args):
 	for storyID in story_ids:
 		# Root is used to access .story and .questions
 		root = directory + storyID
-		formulate_response(root)
+		formulate_response(root, question_type)
 
 if (__name__ == "__main__"):
 	main(sys.argv)
