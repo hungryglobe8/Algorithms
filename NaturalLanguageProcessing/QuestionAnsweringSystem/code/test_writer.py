@@ -10,7 +10,7 @@ def test_small_dev_set():
 
 	writer.make_input_file(root)
 
-	assert os.path.getsize(file_name) == 42
+	assert os.path.getsize(file_name) == 43
 
 def test_large_dev_set():
 	root = get_root("developset-v2")
@@ -18,7 +18,7 @@ def test_large_dev_set():
 
 	writer.make_input_file(root)
 
-	assert os.path.getsize(file_name) == 896
+	assert os.path.getsize(file_name) == 897
 
 def test_midpoint_dev_set():
 	root = get_root("testset1")
@@ -26,10 +26,25 @@ def test_midpoint_dev_set():
 
 	writer.make_input_file(root)
 
-	assert os.path.getsize(file_name) == 483
+	assert os.path.getsize(file_name) == 484
+
+class TestModifiedAnswerFile():
+	def test_modified_answer_where(self):
+		root = get_root("smalldevset")
+
+		writer.modified_answers("where", root)
+
+		assert os.path.exists(root + "-where.answers")
+
+	def test_modified_answer_who(self):
+		root = get_root("testset1")
+
+		writer.modified_answers("who", root)
+
+		assert os.path.exists(root + "-who.answers")
 
 def test_score_subset_small():
-	file_name = "smalldevset.input"
+	file_name = test_folder + "smalldevset.input"
 
 	writer.score_subset(file_name, "who")
 

@@ -2,6 +2,7 @@
 This module can be used to create:
 	Input files - extract all story roots from a devset folder (easily make correct input files)
 	Response files - necessary in scoring QA system
+	Modified answer files - grab answers of a specific question type 
 """
 import qa, os
 
@@ -26,7 +27,7 @@ def make_input_file(folder_name):
 	"""
 	Write an input file given a directory containing stories. 
 
-	Creates the input file in folder_name + '.input'.
+	Creates the input file as folder_name + '.input'.
 	Search the directory of folder_name, looking for files that end with '.story'.
 	Write the base names of these files to the input file.
 		e.g. './tests/testset1/1999-W01-1.story' -> '1999-W01-1'
@@ -48,12 +49,55 @@ def make_input_file(folder_name):
 	story_ids = sorted(story_ids)
 
 	# Write file.
-	new_file_name = folder_name + ".input"
+	new_file_name = folder_name + '.input'
 	with open(new_file_name, 'w') as f:
-		# Remove leading '.'.
-		f.write(folder_name.lstrip('.'))
+		# Remove leading '.', add '/'
+		f.write(folder_name.lstrip('.') + '/')
 		for story_id in story_ids:
 			f.write(f"\n{story_id}")
+
+def modified_answers(question_type, folder_name):
+	"""
+	Make a modified answer file from a directory containing answers. 
+
+	Creates the answer file as folder_name + '-{question_type}.answers'.
+	Search the directory of folder_name, looking for files that end with '.answers'.
+	Write answers that match the question_type:
+		'where' matches with ->
+			QuestionID: 1999-W02-5-1
+			Question: Where is South Queens Junior High School located?
+			Answer: Liverpool, Nova Scotia | Canada
+			Difficulty: Moderate
+	File format:
+		QuestionID: id
+		Question: question
+		Answer: answers
+		Difficulty: difficulty
+		newline
+		...
+	"""
+
+	new_file_name = folder_name + f"-{question_type}.answers"
+	# Open file for writing.
+	with open(new_file_name, 'w') as f:
+		# Scan directory for appropriate answers.
+		for entry in os.scandir(folder_name):
+			# Found answer file.
+			if entry.name.endswith('.answers'):
+				# Read it.
+				with open(entry) as r: 
+					while(True):
+						# Read 5 lines at a time.
+						answer = [r.readline() for x in range(5)]
+
+						# Not enough lines in file.
+						if answer[0] == '':
+							break
+
+						question = answer[1]
+						# Look for matching question word.
+						if any(word.lower() == question_type for word in question.split()):
+							f.writelines(answer)
 
 def score_subset(input_file, question_type):
 	"""
