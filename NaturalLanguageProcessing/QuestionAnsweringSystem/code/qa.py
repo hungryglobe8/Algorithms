@@ -4,10 +4,10 @@ First line of input file is directory path.
 Remaining lines are stories and questions to solve.
 Produce an answer file for each.
 '''
-import sys, os, re, math, text
-import validate, reader
 import spacy
 sp = spacy.load('en_core_web_sm')
+import sys, os, re, math, text
+import validate, reader, writer
 
 def parse_file(file_name):
 	''' 
@@ -38,7 +38,7 @@ def formulate_response(root):
 		answers.append(answer)
 
 	# Write answers.
-	reader.write_response_file(root, answers)
+	writer.response_file(root, answers)
 
 def main(args):
 	# Check input file exists.

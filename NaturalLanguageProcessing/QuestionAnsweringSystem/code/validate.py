@@ -11,7 +11,7 @@ def parse_args(args, length):
 
 def validate_len_args(args, length):
 	''' Check if there are length arguments following the program. '''
-	if len(args) != length + 1:
+	if len(args) < length + 1:
 		raise ValueError("There should be one argument following your program.")
 
 def validate_file_names(args):
@@ -20,7 +20,7 @@ def validate_file_names(args):
 
 	Don't forget to cd to correct directory!
 	'''
-	for arg in args[1:]:
+	for arg in args[1:2]:
 		if not os.path.isfile(arg):
 			raise ValueError(f"{arg} is not a valid file.")
 

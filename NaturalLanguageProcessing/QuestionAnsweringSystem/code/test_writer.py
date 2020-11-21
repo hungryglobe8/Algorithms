@@ -27,3 +27,29 @@ def test_midpoint_dev_set():
 	writer.make_input_file(root)
 
 	assert os.path.getsize(file_name) == 483
+
+def test_score_subset_small():
+	file_name = "smalldevset.input"
+
+	writer.score_subset(file_name, "who")
+
+	assert True
+
+import qa_io, reader
+class TestResponseFile():
+	def test_write_response(self):
+		file_name = test_folder + "basic_answers"
+		answers = [qa_io.Answer(1, "500"), qa_io.Answer(2, "750"), qa_io.Answer(3, "1000")]
+
+		writer.response_file(file_name, answers)
+		
+		assert os.path.exists(file_name + ".response")
+
+	def test_read_questions_write_responses(self):
+		file_name = test_folder + "smalldevset/1999-W02-5"
+		questions = reader.read_questions(file_name)
+		answers = [question.answer_question() for question in questions]
+
+		writer.response_file(file_name, answers)
+
+		assert os.path.exists(file_name + ".response")

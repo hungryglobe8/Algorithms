@@ -44,7 +44,9 @@ validate.py
 Check file and directory names as well as other args.
 reader.py
 Read stories, and questions from text files.
-Also used for writing response files.
+writer.py
+Write response files, input files.
+Quickly generate and score subsets of data (by question type).
 
 story.py
 Story can be used to parse a story file into its important components.

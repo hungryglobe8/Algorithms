@@ -1,9 +1,9 @@
 """
 This module can be used to create:
-	input files - extracts all roots from a devset folder (easily make correct input files)
-	response files - necessary in scoring QA system
+	Input files - extract all story roots from a devset folder (easily make correct input files)
+	Response files - necessary in scoring QA system
 """
-import os
+import qa, os
 
 def response_file(old_file_name, answers):
 	"""
@@ -54,3 +54,13 @@ def make_input_file(folder_name):
 		f.write(folder_name.lstrip('.'))
 		for story_id in story_ids:
 			f.write(f"\n{story_id}")
+
+def score_subset(input_file, question_type):
+	"""
+	Compare only questions of a certain type from input and answer files.
+
+	Very useful in testing and debugging.
+	What works for what types of questions?
+	Create '-score.txt' file.
+	"""
+	qa.main([None, input_file, question_type])
