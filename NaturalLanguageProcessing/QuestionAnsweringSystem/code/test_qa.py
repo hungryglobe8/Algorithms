@@ -3,7 +3,7 @@ test_folder = "./tests/"
 input_file = test_folder + "single.input"
 
 def single_input_args():
-	input_file = test_folder + "single.input"
+	input_file = test_folder + "smalldevset.input"
 
 	return [None, input_file]
 

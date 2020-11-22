@@ -3,8 +3,8 @@ This file maintains various types of classes in use by a QA system:
 	Questions
 	Answers
 """
-import qa
-sp = qa.sp
+import spacy
+sp = spacy.load('en_core_web_sm')
 
 class Question():
 	"""

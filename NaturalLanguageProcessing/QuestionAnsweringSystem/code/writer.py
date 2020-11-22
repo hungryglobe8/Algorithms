@@ -35,7 +35,7 @@ def std_out_response(answers):
 	"""
 
 	for answer in answers:
-		print(f"{str(answer)}")
+		print(str(answer))
 
 def make_input_file(folder_name):
 	"""

@@ -15,9 +15,8 @@ Sentences -
 import reader, string
 stopwords_file = "./code/stopwords.txt"
 stopwords = reader.read_from_file(stopwords_file)
-# Here for now to increase speed of testing. Eventual move to qa file (above individual stories loading)
-import qa
-sp = qa.sp
+import qa_io
+sp = qa_io.sp
 
 class Story():
 	'''

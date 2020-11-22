@@ -13,7 +13,7 @@ class TestQuestions():
 		sut = self.make_basic_question()
 
 		assert sut.question_id == "1"
-		assert len(sut.question) == 3
+		assert len(sut.words) == 3
 		assert sut.difficulty == "Easy"
 
 	def test_basic_question_correct_type(self):
@@ -54,19 +54,19 @@ class TestNovaScotia():
 		questions, story = self.read_story(self.ns_root)
 		res = questions[0].answer_question(story)
 
-		assert res.answer == "Liverpool"
+		assert res.words == "Liverpool"
 
 	def test_who_principal(self):
 		questions, story = self.read_story(self.ns_root)
 		res = questions[1].answer_question(story)
 
-		assert res.answer == "Betty Jean Aucoin"
+		assert res.words == "Betty Jean Aucoin"
 
 	def test_what_metal(self):
 		questions, story = self.read_story(self.ns_root)
 		res = questions[2].answer_question(story)
 
-		assert ' '.join(res.answer) == "The school has turned its one-time metal shop - lost to budget cuts almost two years ago - into a money-making professional fitness club."
+		assert res.words == "The school has turned its one-time metal shop - lost to budget cuts almost two years ago - into a money-making professional fitness club."
 
 	def test_who_runs_club(self):
 		# Still wrong
@@ -74,21 +74,21 @@ class TestNovaScotia():
 		res = questions[3].answer_question(story)
 
 		#"school and community volunteers (make connection between run and operate"
-		assert res.answer == "Betty Jean Aucoin"
+		assert res.words == "Betty Jean Aucoin"
 
 	def test_how_big_is_the_club(self):
 		questions, story = self.read_story(self.ns_root)
 		res = questions[4].answer_question(story)
 
 		# REAL "12,000 square feet"
-		assert res.answer == "12,000 square foot"
+		assert res.words == "12,000 square foot"
 
 	def test_how_much_student_cost(self):
 		questions, story = self.read_story(self.ns_root)
 		res = questions[5].answer_question(story)
 
 		# REAL "$135"
-		assert res.answer == "$180"
+		assert res.words == "$180"
 
 class TestBabeRooth():
 	# Save roots for use in specific tests.
@@ -105,7 +105,7 @@ class TestBabeRooth():
 		res = questions[0].answer_question(story)
 
 		# strip the
-		assert res.answer == "the Edmonton Grads"
+		assert res.words == "the Edmonton Grads"
 
 	def test_what_position(self):
 		#FAILING - sentence too short
@@ -118,25 +118,25 @@ class TestBabeRooth():
 		questions, story = self.read_story(self.br_root)
 		res = questions[2].answer_question(story)
 
-		assert res.answer == "only 5 feet"
+		assert res.words == "only 5 feet"
 
 	def test_how_much_was_babe_paid(self):
 		questions, story = self.read_story(self.br_root)
 		res = questions[3].answer_question(story)
 
 		#never made a cent (close)
-		assert res.answer == "a cent"
+		assert res.words == "a cent"
 
 	def test_how_many_wins(self):
 		questions, story = self.read_story(self.br_root)
 		res = questions[4].answer_question(story)
 
 		#502 - got to be more closely associated with question words
-		assert res.answer == "522"
+		assert res.words == "522"
 
 	def test_when_did_babe_play(self):
 		questions, story = self.read_story(self.br_root)
 		res = questions[5].answer_question(story)
 
 		#prepend from - for date range?
-		assert res.answer == "1929 to 1937"
+		assert res.words == "1929 to 1937"
