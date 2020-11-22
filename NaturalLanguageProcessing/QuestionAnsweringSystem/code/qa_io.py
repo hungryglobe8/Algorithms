@@ -13,9 +13,6 @@ class Question():
 	Difficulty - string
 	Type - first question word encountered in sentence (None if not discovered)
 	"""
-	# Possibly parse these before
-	question_words = ["who", "what", "when", "where", "why", "how much", "how"]
-	secondary_questions = ["if"]
 	def __init__(self, question_id, question, difficulty):
 		self.question_id = question_id
 		self.question = question
@@ -28,9 +25,10 @@ class Question():
 		# Get named entities.
 		ents = story.doc.ents
 
-		answer = "NotImplemented - " + " ".join(question)
+		no_answer = "NotImplemented - " + " ".join(question)
 		# Start with most likely paragraph, look for a match.
-		for sentence, likelihood in most_likely_sentences:
+		# Check k most likely sentences?
+		for sentence, likelihood in most_likely_sentences[]:
 			# Get entities of each sentence.
 			sent_ents = sp(' '.join(sentence.text)).ents
 			# Add possible answers to list.
@@ -40,7 +38,7 @@ class Question():
 					#print(ent.text, ent.label_)
 					return Answer(self.question_id, ent.text)
 
-		return Answer(self.question_id, answer)
+		return Answer(self.question_id, no_answer)
 
 	def pronouns(self):
 		res = []
@@ -78,7 +76,7 @@ class HowQuestion(Question):
 		answer = super().answer_question(story, HowQuestion.quantifiers[how_type], self.question, exclude=super().pronouns())
 		if how_type == "big":
 			answer.replace('-', ' ')
-		elif how_type == "much" and answer.answer.isdigit():
+		elif how_type == "much" and answer.words.isdigit():
 			answer.prepend('$')
 		return answer
 
@@ -167,19 +165,19 @@ class Answer():
 		ID
 		Answer
 	"""
-	def __init__(self, answer_id, answer):
+	def __init__(self, answer_id, words):
 		self.answer_id = answer_id
-		self.answer = answer
+		self.words = words
 
 	def replace(self, remove, add):
-		self.answer = self.answer.replace(remove, add)
+		self.words = self.words.replace(remove, add)
 
 	def prepend(self, add):
-		self.answer = add + self.answer
+		self.words = add + self.words
 
 	def __str__(self):
-		''' Leaves self.answer if the value is None. '''			
-		return f"QuestionID: {self.answer_id}\nAnswer: {self.answer}\n"
+		''' Leaves self.words if the value is None. '''			
+		return f"QuestionID: {self.answer_id}\nAnswer: {self.words}\n"
 
 def make_question(question_id, question, difficulty):
 	params = question_id, question, difficulty
@@ -194,6 +192,7 @@ def make_question(question_id, question, difficulty):
 	# Figure out type of question.
 	for word in question:
 		word = word.lower()
+		# Use first question word to appear.
 		if word in Question.question_words:
 			try:
 				return switcher[word]

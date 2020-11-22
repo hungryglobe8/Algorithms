@@ -2,6 +2,7 @@
 This module can be used to create:
 	Input files - extract all story roots from a devset folder (easily make correct input files)
 	Response files - necessary in scoring QA system
+	Std output - probably best redirected to a .response file
 	Modified answer files - grab answers of a specific question type 
 """
 import qa, os
@@ -20,8 +21,21 @@ def response_file(old_file_name, answers):
 	new_file_name = old_file_name + ".response"
 	with open(new_file_name, 'w') as f:
 		for answer in answers:
-			# Leave a line between each answer.
 			f.write(f"{str(answer)}\n")
+
+def std_out_response(answers):
+	"""
+	Print a list of answers to stdout.
+
+	Can easily send to a file through > response.txt
+	Formatting:
+		QuestionID: id
+		Answer: answer
+		newline
+	"""
+
+	for answer in answers:
+		print(f"{str(answer)}")
 
 def make_input_file(folder_name):
 	"""
@@ -111,7 +125,7 @@ def score_subset(input_file, question_type):
 	qa.main([None, input_file], question_type)
 
 	# Use a list of args instead of a string
-	input_files = ['file1', 'file2', 'file3']
-	my_cmd = ['cat'] + input_files
-	with open('myfile', "w") as outfile:
-    	subprocess.run(my_cmd, stdout=outfile)
+	# input_files = ['file1', 'file2', 'file3']
+	# my_cmd = ['cat'] + input_files
+	# with open('myfile', "w") as outfile:
+	# 	subprocess.run(my_cmd, stdout=outfile)

@@ -40,9 +40,9 @@ def formulate_response(root, question_type=None):
 
 	# Write answers.
 	if question_type is not None:
-		writer.response_file(root + f"-{question_type}", answers)
+		writer.std_out_response(answers)
 	else:
-		writer.response_file(root, answers)
+		writer.std_out_response(answers)
 
 def main(args, question_type=None):
 	# Check input file exists.
