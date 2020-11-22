@@ -30,7 +30,7 @@ def formulate_response(root, question_type=None):
 	answers = []
 	for question in questions:
 		answer = None
-		if (question_type is None or any(word.lower() == question_type for word in question.question)):
+		if (question_type is None or any(word.lower() == question_type for word in question.words)):
 			try:
 				answer = question.answer_question(story)
 			except:

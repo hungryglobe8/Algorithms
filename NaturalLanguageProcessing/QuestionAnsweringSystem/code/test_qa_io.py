@@ -34,7 +34,7 @@ class TestAnswers():
 		sut = self.make_basic_answer()
 
 		assert sut.answer_id == "1"
-		assert sut.answer == "Jeremy"
+		assert sut.words == "Jeremy"
 
 	def test_basic_answer_to_string(self):
 		sut = self.make_basic_answer()

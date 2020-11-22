@@ -49,7 +49,7 @@ class Story():
 			self.paragraphs = ''.join(self.text).split('\n\n')
 
 		# Vocab set is lowercase, stripped of punctuation, unique (possible stems?)
-		self.vocab = get_vocab(self.doc.text.split())
+		self.vocab = get_vocab_from_doc(self.doc)
 
 	def get_most_likely_sentences(self, question, include=[], exclude=[]):
 		# exclude stopwords and user-defined words.
@@ -73,7 +73,7 @@ class SignatureVector():
 	Excludes stopwords by default. '''
 	def __init__(self, text, vocab, include=[], exclude=[]):
 		self.text = text
-		text_set = get_vocab(text, include=include, exclude=exclude)
+		text_set = get_vocab_from_list(text, include=include, exclude=exclude)
 		self.vector = {word: 0 for word in vocab}
 		for word in text_set:
 			if word in vocab:
@@ -106,17 +106,21 @@ class SignatureVector():
 		else:
 			return round(num/denom, 2)
 
-def get_vocab(text, include=[], exclude=[]):
-	"""
-	Text is a list of words (stripped of whitespaces).
-	
-	Get vocab returns a unique list of the lowercase, punctuation-stripped versions of these words.
-	TODO - stems of words?
+def get_vocab_from_list(words, include=[], exclude=[]): 
+	""" Get spacy information from a list of words before returning vocab. """
+	return get_vocab_from_doc(sp(' '.join(words)), include, exclude)
 
+def get_vocab_from_doc(doc, include=[], exclude=[]):
+	"""
+	Get vocab returns a unique list of the lowercase, punctuation-stripped versions of these words.
+	TODO - lemmatized of words?
+
+	Doc must be sp document.
 	Include and Exclude can be used to remove things like stopwords or include specific additional terms.
 	"""
 	unique = []
-	for word in text:
+	for word in doc:
+		word = word.lemma_
 		word = word.lower().translate(str.maketrans('', '', string.punctuation))
 		if word not in unique:
 			# Add a word if it is in include (highest priority) or if it is not in exclude.

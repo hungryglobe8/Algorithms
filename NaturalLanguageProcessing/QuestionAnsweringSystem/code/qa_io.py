@@ -9,26 +9,28 @@ sp = qa.sp
 class Question():
 	"""
 	QuestionID - string
-	Question - list of strings (original format)
+	Words - list of strings (original format)
 	Difficulty - string
 	Type - first question word encountered in sentence (None if not discovered)
 	"""
-	def __init__(self, question_id, question, difficulty):
+	def __init__(self, question_id, words, difficulty):
 		self.question_id = question_id
-		self.question = question
+		self.words = words
 		self.difficulty = difficulty
 
 	def answer_question(self, story, acceptable_types, question, include=[], exclude=[]):
 		""" Should be implemented in subclasses. """
 		# Get most likely sentences (sorted by value).
-		most_likely_sentences = story.get_most_likely_sentences(question, include=include, exclude=exclude)
+		words = sp(' '.join(question))
+		lemma = [token.lemma_ for token in words]
+		most_likely_sentences = story.get_most_likely_sentences(lemma, include=include, exclude=exclude)
 		# Get named entities.
 		ents = story.doc.ents
 
 		no_answer = "NotImplemented - " + " ".join(question)
 		# Start with most likely paragraph, look for a match.
 		# Check k most likely sentences?
-		for sentence, likelihood in most_likely_sentences[]:
+		for sentence, likelihood in most_likely_sentences:
 			# Get entities of each sentence.
 			sent_ents = sp(' '.join(sentence.text)).ents
 			# Add possible answers to list.
@@ -42,7 +44,7 @@ class Question():
 
 	def pronouns(self):
 		res = []
-		for word in self.question:
+		for word in self.words:
 			if word[0].isupper():
 				res.append(word.lower())
 		return res
@@ -63,17 +65,17 @@ class HowQuestion(Question):
 	def answer_question(self, story):
 		# Get type of how question to find acceptable final answer types.
 		how_type = ""
-		for i, word in enumerate(self.question):
+		for i, word in enumerate(self.words):
 			if word.lower() == "how":
-				how_type = self.question[i+1]
+				how_type = self.words[i+1]
 				break
 
 		if how_type not in self.quantifiers.keys():
-			most_likely_sentences = story.get_most_likely_sentences(self.question)
+			most_likely_sentences = story.get_most_likely_sentences(self.words)
 			return Answer(self.question_id, ' '.join(most_likely_sentences[0][0].text))
 
 		# Currently replacing '-' with ' ' in Answer class itself.
-		answer = super().answer_question(story, HowQuestion.quantifiers[how_type], self.question, exclude=super().pronouns())
+		answer = super().answer_question(story, HowQuestion.quantifiers[how_type], self.words, exclude=super().pronouns())
 		if how_type == "big":
 			answer.replace('-', ' ')
 		elif how_type == "much" and answer.words.isdigit():
@@ -93,9 +95,9 @@ class WhatQuestion(Question):
 		Get rid of pronouns?
 		"""
 		# Get most likely sentences (sorted by value).
-		most_likely_sentences = story.get_most_likely_sentences(self.question, exclude=super().pronouns())
+		most_likely_sentences = story.get_most_likely_sentences(self.words, exclude=super().pronouns())
 		question_type = ""
-		question_doc = sp(' '.join(self.question))
+		question_doc = sp(' '.join(self.words))
 		for i, token in enumerate(question_doc):
 			#Similarities include token.pos_ as NOUN or token.tag_ as NN
 			if token.text.lower() == "what":
@@ -103,7 +105,7 @@ class WhatQuestion(Question):
 				break
 
 		if question_type is "NOUN":
-			return super().answer_question(story, self.acceptable_types, self.question)
+			return super().answer_question(story, self.acceptable_types, self.words)
 
 		return Answer(self.question_id, ' '.join(most_likely_sentences[0][0].text))
 
@@ -113,7 +115,7 @@ class WhyQuestion(Question):
 
 	def answer_question(self, story):
 		# Get most likely sentences (sorted by value).
-		most_likely_sentences = story.get_most_likely_sentences(self.question, exclude=super().pronouns())
+		most_likely_sentences = story.get_most_likely_sentences(self.words, exclude=super().pronouns())
 
 		return Answer(self.question_id, ' '.join(most_likely_sentences[0][0].text))
 
@@ -123,7 +125,7 @@ class WhenQuestion(Question):
 		Question.__init__(self, question_id, question, difficulty)
 
 	def answer_question(self, story):
-		return super().answer_question(story, WhenQuestion.acceptable_types, self.question)
+		return super().answer_question(story, WhenQuestion.acceptable_types, self.words)
 
 class WhoQuestion(Question):
 	"""
@@ -138,7 +140,7 @@ class WhoQuestion(Question):
 		Not extremely accurate (2nd most likely)
 		Get rid of pronouns?
 		"""
-		return super().answer_question(story, WhoQuestion.acceptable_types, self.question)
+		return super().answer_question(story, WhoQuestion.acceptable_types, self.words)
 
 class WhereQuestion(Question):
 	extra_words = ["in"]
@@ -150,20 +152,14 @@ class WhereQuestion(Question):
 	def answer_question(self, story):
 		return super().answer_question(story, WhereQuestion.acceptable_types, WhereQuestion.extra_words, include=WhereQuestion.extra_words)
 
-	def break_ties(self, poss):
-		''' Loop through acceptable types and return best possibility. '''
-		for best in self.acceptable_types:
-			for answer in poss:
-				if answer.label_ == best:
-					return answer
-
 class Answer():
 	"""
 	Answers for questions consist of the ID and the answer itself.
 
 	String verison is printed as:
 		ID
-		Answer
+		Words
+		newline
 	"""
 	def __init__(self, answer_id, words):
 		self.answer_id = answer_id
@@ -193,7 +189,7 @@ def make_question(question_id, question, difficulty):
 	for word in question:
 		word = word.lower()
 		# Use first question word to appear.
-		if word in Question.question_words:
+		if word in switcher.keys():
 			try:
 				return switcher[word]
 			except:

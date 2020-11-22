@@ -38,7 +38,7 @@ class TestStory():
         # use questions [x-y]
         questions = reader.read_questions(test_folder + "1999-W02-5")
 
-        words = questions[0].question
+        words = questions[0].words
 
         res = sut.get_most_likely_sentences(words)
 
