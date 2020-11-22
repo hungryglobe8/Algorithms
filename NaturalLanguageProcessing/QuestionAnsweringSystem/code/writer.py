@@ -5,7 +5,7 @@ This module can be used to create:
 	Std output - probably best redirected to a .response file
 	Modified answer files - grab answers of a specific question type 
 """
-import qa, os
+import qa, os, sys
 
 def response_file(old_file_name, answers):
 	"""
@@ -72,17 +72,17 @@ def make_input_file(folder_name):
 
 def modified_answers(question_type, folder_name):
 	"""
-	Make a modified answer file from a directory containing answers. 
+	Print specific answers from a directory containing answers. 
 
-	Creates the answer file as folder_name + '-{question_type}.answers'.
+	Suggested redirect > '{name}-{question_type}.answers'.
 	Search the directory of folder_name, looking for files that end with '.answers'.
-	Write answers that match the question_type:
+	Print answers that match the question_type:
 		'where' matches with ->
 			QuestionID: 1999-W02-5-1
 			Question: Where is South Queens Junior High School located?
 			Answer: Liverpool, Nova Scotia | Canada
 			Difficulty: Moderate
-	File format:
+	Stdout format:
 		QuestionID: id
 		Question: question
 		Answer: answers
@@ -91,41 +91,36 @@ def modified_answers(question_type, folder_name):
 		...
 	"""
 
-	new_file_name = folder_name + f"-{question_type}.answers"
-	# Open file for writing.
-	with open(new_file_name, 'w') as f:
-		# Scan directory for appropriate answers.
-		for entry in os.scandir(folder_name):
-			# Found answer file.
-			if entry.name.endswith('.answers'):
-				# Read it.
-				with open(entry) as r: 
-					while(True):
-						# Read 5 lines at a time.
-						answer = [r.readline() for x in range(5)]
+	# Scan directory for appropriate answers.
+	for entry in os.scandir(folder_name):
+		# Found answer file.
+		if entry.name.endswith('.answers'):
+			# Read it.
+			with open(entry) as r: 
+				while(True):
+					# Read 5 lines at a time.
+					answer = [r.readline() for x in range(5)]
 
-						# Not enough lines in file.
-						if answer[0] == '':
-							break
+					# Not enough lines in file.
+					if answer[0] == '':
+						break
 
-						question = answer[1]
-						# Look for matching question word.
-						if any(word.lower() == question_type for word in question.split()):
-							f.writelines(answer)
+					question = answer[1]
+					# Look for matching question word.
+					if any(word.lower() == question_type for word in question.split()):
+						print(''.join(answer[:-1]))
 
-def score_subset(input_file, question_type):
+def main(args):
 	"""
-	Compare only questions of a certain type from input and answer files.
+	Main can be used to generate modified answer files from the command line.
 
-	Very useful in testing and debugging.
-	What works for what types of questions?
-	Create '-score.txt' file.
+	These files only contain answers of a specific question type.
 	"""
+	# Get relevant args.
+	folder_name = args[1]
+	question_type = args[2]
 
-	qa.main([None, input_file], question_type)
+	modified_answers(question_type, folder_name)
 
-	# Use a list of args instead of a string
-	# input_files = ['file1', 'file2', 'file3']
-	# my_cmd = ['cat'] + input_files
-	# with open('myfile', "w") as outfile:
-	# 	subprocess.run(my_cmd, stdout=outfile)
+if (__name__ == "__main__"):
+	main(sys.argv)

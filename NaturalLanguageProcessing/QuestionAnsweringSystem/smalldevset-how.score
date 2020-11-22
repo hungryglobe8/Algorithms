@@ -1,0 +1,73 @@
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W02-5-6
+
+Comparing Key  `12,000 square feet'
+      and Resp `12,000 square foot'
+
+Recall    = 0.67 (2/3)
+Precision = 0.67 (2/3)
+F-measure = 0.67
+
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W02-5-7
+
+Comparing Key  `$135 a year'
+      and Resp `$180'
+
+Recall    = 0.00 (0/3)
+Precision = 0.00 (0/1)
+F-measure = 0.00
+
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W03-5-4
+
+Comparing Key  `5 feet, 2 inches'
+      and Resp `only 5 feet'
+
+Recall    = 0.50 (2/4)
+Precision = 0.67 (2/3)
+F-measure = 0.57
+
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W03-5-5
+
+Comparing Key  `nothing'
+      and Resp `a cent'
+
+Comparing Key  `never made a cent'
+      and Resp `a cent'
+
+=> Best match in answer key is:
+   `never made a cent'
+
+Recall    = 0.50 (2/4)
+Precision = 1.00 (2/2)
+F-measure = 0.67
+
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W03-5-6
+
+Comparing Key  `502'
+      and Resp `one'
+
+Recall    = 0.00 (0/1)
+Precision = 0.00 (0/1)
+F-measure = 0.00
+
+
+
+Finished processing 5 questions, 5 of which had responses.
+*************************************************************************
+
+FINAL RESULTS
+
+AVERAGE RECALL =    0.3333  (1.67 / 5)
+AVERAGE PRECISION = 0.4667  (2.33 / 5)
+AVERAGE F-MEASURE = 0.3889
+
+*************************************************************************

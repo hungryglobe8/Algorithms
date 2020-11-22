@@ -42,11 +42,24 @@ def formulate_response(root, question_type=None):
 	else:
 		writer.std_out_response(answers)
 
+def score_subset(input_file, question_type):
+	"""
+	Compare only questions of a certain type from input and answer files.
+
+	Very useful in testing and debugging.
+	What works for what types of questions?
+	Create '-score.txt' file.
+	"""
+	pass
+
 def main(args, question_type=None):
 	# Check input file exists.
 	validate.validate_file_names(args)
 	# Get lines of input file.
 	directory, story_ids = parse_file(args[1])
+	# Get optional question_type
+	if args[2]:
+		question_type = args[2]
 
 	for storyID in story_ids:
 		# Root is used to access .story and .questions

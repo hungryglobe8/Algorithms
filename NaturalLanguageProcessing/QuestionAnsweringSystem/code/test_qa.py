@@ -27,3 +27,10 @@ def test_single_input_main():
 
 	assert os.path.exists(test_folder + "smalldevset/1999-W02-5.response")
 	assert os.path.exists(test_folder + "smalldevset/1999-W03-5.response")
+
+def test_score_subset_small():
+	file_name = test_folder + "smalldevset.input"
+
+	qa.main([None, file_name, "who"])
+
+	assert True

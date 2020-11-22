@@ -1,0 +1,23 @@
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W03-5-7
+
+Comparing Key  `from 1929 to 1937'
+      and Resp `this week'
+
+Recall    = 0.00 (0/4)
+Precision = 0.00 (0/2)
+F-measure = 0.00
+
+
+
+Finished processing 1 questions, 1 of which had responses.
+*************************************************************************
+
+FINAL RESULTS
+
+AVERAGE RECALL =    0.0000  (0.00 / 1)
+AVERAGE PRECISION = 0.0000  (0.00 / 1)
+AVERAGE F-MEASURE = 0.0000
+
+*************************************************************************

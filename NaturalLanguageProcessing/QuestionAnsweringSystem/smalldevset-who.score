@@ -1,0 +1,51 @@
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W02-5-2
+
+Comparing Key  `Betty Jean Aucoin'
+      and Resp `Betty Jean Aucoin'
+
+Recall    = 1.00 (3/3)
+Precision = 1.00 (3/3)
+F-measure = 1.00
+
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W02-5-5
+
+Comparing Key  `a non-profit society'
+      and Resp `Betty Jean Aucoin'
+
+Comparing Key  `school and community volunteers'
+      and Resp `Betty Jean Aucoin'
+
+=> Best match in answer key is:
+   `a non-profit society'
+
+Recall    = 0.00 (0/3)
+Precision = 0.00 (0/3)
+F-measure = 0.00
+
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W03-5-9
+
+Comparing Key  `Ian MacLean'
+      and Resp `Babe Belanger'
+
+Recall    = 0.00 (0/2)
+Precision = 0.00 (0/2)
+F-measure = 0.00
+
+
+
+Finished processing 3 questions, 3 of which had responses.
+*************************************************************************
+
+FINAL RESULTS
+
+AVERAGE RECALL =    0.3333  (1.00 / 3)
+AVERAGE PRECISION = 0.3333  (1.00 / 3)
+AVERAGE F-MEASURE = 0.3333
+
+*************************************************************************

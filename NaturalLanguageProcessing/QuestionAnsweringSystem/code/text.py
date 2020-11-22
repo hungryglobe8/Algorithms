@@ -48,7 +48,7 @@ class Story():
 			self.paragraphs = ''.join(self.text).split('\n\n')
 
 		# Vocab set is lowercase, stripped of punctuation, unique (possible stems?)
-		self.vocab = get_vocab_from_doc(self.doc)
+		self.vocab = get_vocab_from_doc([token.text for token in self.doc])
 
 	def get_most_likely_sentences(self, question, include=[], exclude=[]):
 		# exclude stopwords and user-defined words.
@@ -72,7 +72,7 @@ class SignatureVector():
 	Excludes stopwords by default. '''
 	def __init__(self, text, vocab, include=[], exclude=[]):
 		self.text = text
-		text_set = get_vocab_from_list(text, include=include, exclude=exclude)
+		text_set = get_vocab_from_doc(text, include=include, exclude=exclude)
 		self.vector = {word: 0 for word in vocab}
 		for word in text_set:
 			if word in vocab:
@@ -119,7 +119,7 @@ def get_vocab_from_doc(doc, include=[], exclude=[]):
 	"""
 	unique = []
 	for word in doc:
-		word = word.lemma_
+		#word = word.lemma_
 		word = word.lower().translate(str.maketrans('', '', string.punctuation))
 		if word not in unique:
 			# Add a word if it is in include (highest priority) or if it is not in exclude.

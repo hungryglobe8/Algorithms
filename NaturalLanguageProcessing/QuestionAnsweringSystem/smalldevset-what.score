@@ -1,0 +1,45 @@
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W02-5-3
+
+Comparing Key  `turned it into a fitness club'
+      and Resp `The school has turned its one-time metal shop - lost to budget cuts almost two years ago - into a money-making professional fitness club.'
+
+Recall    = 0.83 (5/6)
+Precision = 0.21 (5/24)
+F-measure = 0.33
+
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W03-5-2
+
+Comparing Key  `Edmonton Grads'
+      and Resp `the Edmonton Grads'
+
+Recall    = 1.00 (2/2)
+Precision = 0.67 (2/3)
+F-measure = 0.80
+
+-----------------------------------------------------------------------------------------
+
+SCORING 1999-W03-5-3
+
+Comparing Key  `forward'
+      and Resp `Michael Jordan'
+
+Recall    = 0.00 (0/1)
+Precision = 0.00 (0/2)
+F-measure = 0.00
+
+
+
+Finished processing 3 questions, 3 of which had responses.
+*************************************************************************
+
+FINAL RESULTS
+
+AVERAGE RECALL =    0.6111  (1.83 / 3)
+AVERAGE PRECISION = 0.2917  (0.88 / 3)
+AVERAGE F-MEASURE = 0.3949
+
+*************************************************************************
